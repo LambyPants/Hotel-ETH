@@ -1,10 +1,7 @@
-.App {
+.Calendar {
+  padding: 20px;
   height: calc(100% - 40px);
   position: relative;
+  max-width: 1200px;
   margin: 0 auto;
-}
-
-.App hr {
-  margin-top: 24px;
-  margin-bottom: 24px;
 }
