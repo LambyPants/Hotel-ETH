@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.7;
+pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
@@ -13,7 +13,7 @@ import "./Token.sol";
 /// @author Ryan "Lamby" Lambert
 /// @notice 1 token is always = 1 day accomodation. The USD price of the token can change. Appointments are scheduled in epoch time.
 /// @dev Example project to be used on Rinkeby test network
-contract LambysBNB {
+contract Hotel {
     // to prevent overflows, use SafeMath
     using SafeMath for uint256;
     using SafeMath for uint64;

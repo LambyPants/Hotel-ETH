@@ -4,7 +4,7 @@ import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Counter } from './features/counter/Counter';
 import './App.css';
-import { Splash } from './features/welcome/Splash';
+import { Splash } from './features/splash/Splash';
 import { BookingCalendar } from './features/bookingCalendar/BookingCalendar';
 const localizer = momentLocalizer(moment);
 

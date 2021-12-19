@@ -39,7 +39,7 @@ export function BookingCalendar() {
   // }
   return (
     <div className={styles.Calendar}>
-      <Calendar
+      {/* <Calendar
         views={['month', 'week']}
         localizer={localizer}
         events={[
@@ -56,7 +56,7 @@ export function BookingCalendar() {
         endAccessor="end"
         timeslots={1}
         onSelectSlot={handleSelect}
-      />
+      /> */}
     </div>
   );
 }

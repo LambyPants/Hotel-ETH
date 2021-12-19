@@ -4,14 +4,33 @@
   width: 100%;
   background-position: center;
   background-size: cover;
+  position: relative;
 }
 
-.wrapper > div {
+.wrapper > .textContainer {
   height: 100%;
 }
 
-.wrapper button {
+.wrapper > .textContainer > button {
   margin-top: 8px;
+}
+
+.warning {
+  position: absolute;
+  bottom: 6em;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+.warning > div {
+  display: flex;
+  justify-content: center;
+}
+
+.warning .MuiAlert-icon {
+  margin-right: 8px !important;
 }
 
 .text {
