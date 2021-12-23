@@ -26,3 +26,11 @@ code {
   text-align: center;
   flex-wrap: nowrap !important;
 }
+div.rbc-toolbar > span:nth-child(3) {
+  display: block;
+  width: 180px;
+}
+.App div.rbc-calendar {
+  height: calc(100% - 48px);
+  margin-bottom: 10px;
+}

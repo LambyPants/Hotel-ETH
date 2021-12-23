@@ -1,7 +1,17 @@
 .Calendar {
   padding: 20px;
-  height: calc(100% - 40px);
-  position: relative;
-  max-width: 1200px;
-  margin: 0 auto;
+  height: calc(100% - 100px);
+  position: absolute;
+  top: 0;
+  max-width: 1270px;
+  margin: 60px auto auto auto;
+  left: 0;
+  right: 0;
+}
+
+.book {
+  display: flex;
+  justify-content: space-between;
+  /* position: absolute;
+  right: 0; */
 }

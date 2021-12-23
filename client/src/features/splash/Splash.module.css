@@ -36,6 +36,12 @@
 .text {
   color: white;
 }
+
+.chip {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+}
 /* .wrapper {
   width: 100%;
   height: 100%;

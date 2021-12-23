@@ -1,24 +1,20 @@
-import React from 'react';
-import {
-  Alert,
-  Button,
-  Collapse,
-  IconButton,
-  Grid,
-  Typography,
-  Chip,
-} from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@mui/styles';
-import CloseIcon from '@mui/icons-material/Close';
-import {
-  selectShowCalendar,
-  toggleCalendar,
-  connectEthereum,
-  selectUserAddress,
-} from './splashSlice';
 import { useSelector, useDispatch } from 'react-redux';
 
+import {
+  selectShowCalendar,
+  resetState,
+  connectEthereum,
+  selectUserAddress,
+  hasEthereum,
+  selectUserBalance,
+} from './splashSlice';
+
 import styles from './Splash.module.css';
+import { WalletChip } from './components/WalletChip';
+import { WelcomeMessage } from './components/WelcomeMessage';
+import { NoEthereumError } from './components/NoEthereumError';
 
 const themeOverrides = makeStyles((theme) => ({
   title: {
@@ -30,100 +26,55 @@ const themeOverrides = makeStyles((theme) => ({
   },
 }));
 
-function renderNoEthereumError(open, setOpen) {
-  // if (window.ethereum) {
-  //   return '';
-  // }
-  return (
-    <Collapse in={open}>
-      <Alert
-        severity="error"
-        action={
-          <IconButton
-            aria-label="close"
-            color="inherit"
-            size="small"
-            onClick={() => {
-              setOpen(false);
-            }}
-          >
-            <CloseIcon fontSize="inherit" />
-          </IconButton>
-        }
-        sx={{ mb: 2 }}
-      >
-        {' '}
-        No Ethereum wallet was detected. To book a room, please install{' '}
-        <a
-          href="http://metamask.io"
-          aria-label="install an ethereum wallet to use this app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          MetaMask
-        </a>
-      </Alert>
-    </Collapse>
-  );
-}
+function _startPollingData() {
+  this._pollDataInterval = setInterval(() => this._updateBalance(), 1000);
 
-function renderWelcomeMessage(showCalendar, dispatch) {
-  return (
-    <Grid
-      className={styles.textContainer}
-      container
-      justifyContent="center"
-      alignItems="center"
-      direction="column"
-    >
-      <Typography variant="h1" className={styles.text}>
-        Hotel ETH
-      </Typography>
-      <Typography variant="h6" className={styles.text}>
-        A (demo) Bed and Breakfast run on Ethereum
-      </Typography>
-      <Button
-        variant="contained"
-        color="secondary"
-        onClick={() => dispatch(connectEthereum())}
-      >
-        Connect Wallet
-      </Button>
-      <Button variant="text" color="secondary">
-        View Schedule
-      </Button>
-    </Grid>
-  );
-}
-
-function renderWalletChip(userAddress) {
-  if (!userAddress) return '';
-  return (
-    <Chip
-      label={userAddress}
-      onClick={() => {}}
-      // onClick={handleClick}
-      // onDelete={handleDelete}
-      deleteIcon={<CloseIcon />}
-      variant="raised"
-    />
-  );
+  // We run it once immediately so we don't have to wait for it
+  this._updateBalance();
 }
 
 export function Splash() {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = useState(true);
   const showCalendar = useSelector(selectShowCalendar);
   const userAddress = useSelector(selectUserAddress);
-  console.log('showCalendar: ', showCalendar);
+  const ethExists = useSelector(hasEthereum);
+  const userBalance = useSelector(selectUserBalance);
   const dispatch = useDispatch();
-  const overrides = themeOverrides();
+
+  useEffect(() => {
+    if (ethExists) {
+      window.ethereum.on('accountsChanged', ([newAddress]) => {
+        if (newAddress === undefined) {
+          dispatch(resetState());
+          return;
+        }
+        dispatch(connectEthereum());
+      });
+    } else {
+      setOpen(true);
+    }
+  }, [ethExists, dispatch]);
 
   return (
     <div className={styles.wrapper}>
-      {renderWalletChip(userAddress)}
-      {renderWelcomeMessage(showCalendar, dispatch)}
+      <WalletChip
+        userAddress={userAddress}
+        userBalance={userBalance}
+        handleDelete={() => dispatch(resetState())}
+      />
+      <WelcomeMessage
+        showCalendar={showCalendar}
+        handleConnectEthereum={() => dispatch(connectEthereum())}
+      />
+
       <div className={styles.warning}>
-        <div>{renderNoEthereumError(open, setOpen)}</div>
+        <div>
+          <NoEthereumError
+            ethExists={ethExists}
+            open={open}
+            setOpen={setOpen}
+          />
+        </div>
       </div>
     </div>
   );

@@ -67,6 +67,11 @@ contract Hotel {
         require(_d > 0 && _d < 32, "invalid day");
         _;
     }
+    // numDays > 0
+    modifier validNumDays(uint8 _num) {
+        require(_num > 0, "must be a value above 0");
+        _;
+    }
     // timestamp cannot be before CONTRACT_DEPLOY_TIME && must be mod 0
     // this is because we use unix days as our mapping keys
     modifier validTimestamp(uint256 _t) {
@@ -136,8 +141,6 @@ contract Hotel {
         uint8 daysInMonth = calculateDaysInMonth(_month, _year);
         // get the timestamp for the 1st of the month
         uint256 _timestamp = dateTime.toTimestamp(_year, _month, 1);
-        // this prevents invalid years passed to the contract
-        validateTimestamp(_timestamp);
         // up to 31 days in a month
         bool[] memory monthlyAppointments = new bool[](daysInMonth);
         for (i; i < calculateDaysInMonth(_month, _year); i++) {
@@ -177,7 +180,12 @@ contract Hotel {
         string memory _name,
         uint256 _timestamp,
         uint8 _numDays
-    ) public validName(_name) validTimestamp(_timestamp) {
+    )
+        public
+        validName(_name)
+        validTimestamp(_timestamp)
+        validNumDays(_numDays)
+    {
         // the goal is to have at least 24 hours notice before a booking
         // uint256 _timeDelta = _timestamp.sub(block.timestamp);
         // require(_timeDelta >= 86400, "booking date too close to todays date");
@@ -227,21 +235,21 @@ contract Hotel {
     /// @dev Chainlink returns int256 values which can be negative
     /// @return int256
     function returnPrice() internal view returns (int256) {
-        try priceFeed.latestRoundData() returns (
-            uint80 roundID,
-            int256 price,
-            uint256 startedAt,
-            uint256 timeStamp,
-            uint80 answeredInRound
-        ) {
-            console.log(roundID, startedAt, timeStamp, answeredInRound);
-            return price;
-        } catch Error(string memory _err) {
-            console.log(_err);
-            // not for production; suggest you revert, call propietary fallback oracle, fetch from another 3rd-party oracle, etc.
-            // in our case lets just return 100 USD
-            return 100 * 1e8; // ETH won't fall under $100, right? ....right?
-        }
+        // try priceFeed.latestRoundData() returns (
+        //     uint80 roundID,
+        //     int256 price,
+        //     uint256 startedAt,
+        //     uint256 timeStamp,
+        //     uint80 answeredInRound
+        // ) {
+        //     console.log(roundID, startedAt, timeStamp, answeredInRound);
+        //     return price;
+        // } catch Error(string memory _err) {
+        //     console.log(_err);
+        // not for production; suggest you revert, call propietary fallback oracle, fetch from another 3rd-party oracle, etc.
+        // in our case lets just return 100 USD
+        return 100 * 1e8; // ETH won't fall under $100, right? ....right?
+        // }
     }
 
     /// @notice Returns the price of X tokens

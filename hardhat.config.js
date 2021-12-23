@@ -21,4 +21,9 @@ const developmentChains = ['hardhat', 'localhost'];
 module.exports = {
   solidity: '0.8.4',
   developmentChains,
+  networks: {
+    hardhat: {
+      chainId: 1337,
+    },
+  },
 };

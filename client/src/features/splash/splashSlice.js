@@ -6,39 +6,70 @@ import {
 } from '@reduxjs/toolkit';
 import { connectWallet, setContractABI } from './splashAPI';
 
-export const connectEthereum = createAsyncThunk(
-  'splash/connectEthereum',
-  async () => connectWallet(),
+export const fetchUserBalance = createAsyncThunk(
+  'splash/fetchUserBalance',
+  async (address, thunkAPI) => {
+    console.log('address: ', address);
+    try {
+      const contractABI = selectHotelABI(thunkAPI.getState());
+      const data = (await contractABI.getTokenBalance(address)).toNumber();
+      console.log('data: ', data);
+      return data;
+    } catch (err) {
+      console.log({ err });
+    }
+  },
 );
 
+export const connectEthereum = createAsyncThunk(
+  'splash/connectEthereum',
+  async (arg, thunkAPI) => {
+    console.log('thunkAPI: ', thunkAPI);
+    const address = await connectWallet();
+    thunkAPI.dispatch(fetchUserBalance(address));
+    return address;
+  },
+);
+
+const initialState = {
+  showCalendar: false,
+  userAddress: '',
+  hotelAPI: {},
+  provider: null,
+  userBalance: 0,
+};
 export const splashSlice = createSlice({
   name: 'splash',
-  initialState: {
-    showCalendar: false,
-    userAddress: '',
-    hotelAPI: {},
-    provider: null,
-  },
+  initialState,
   reducers: {
     toggleCalendar(state, action) {
       const showCalendar = action.payload;
       return { ...state, showCalendar };
+    },
+    resetState() {
+      return initialState;
     },
   },
   extraReducers: (builder) => {
     builder.addCase(connectEthereum.fulfilled, (state, action) => {
       const userAddress = action.payload;
       console.log(action.payload);
-      return { ...state, userAddress, showCalendar: false };
+      return { ...state, userAddress, showCalendar: true };
+    });
+    builder.addCase(fetchUserBalance.fulfilled, (state, action) => {
+      const userBalance = action.payload;
+      console.log(userBalance);
+      return { ...state, userBalance };
     });
   },
 });
 
-export const { toggleCalendar } = splashSlice.actions;
+export const { toggleCalendar, resetState } = splashSlice.actions;
 
 export const hasEthereum = () => window.ethereum;
 export const selectShowCalendar = (state) => state.splash.showCalendar;
 export const selectUserAddress = (state) => state.splash.userAddress;
+export const selectUserBalance = (state) => state.splash.userBalance;
 export const selectHotelABI = createSelector([hasEthereum], (eth) =>
   eth ? setContractABI() : {},
 );
