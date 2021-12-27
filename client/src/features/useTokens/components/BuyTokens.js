@@ -13,7 +13,7 @@ export function BuyToken({
   const [currVal, setVal] = useState(1);
   const [userTyped, setUserTyped] = useState(false);
 
-  if (!showSpendTokens) {
+  if (showSpendTokens) {
     return '';
   }
   return (

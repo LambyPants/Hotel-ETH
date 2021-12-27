@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "deploy:local": "npx hardhat compile && npx hardhat run scripts/deploy.js --network localhost",
-    "dev": "concurrently \"npx hardhat node\" \"npm run client\"",
+    "dev": "concurrently \"npx hardhat node\" \"wait-on http://localhost:8545/ && npm run deploy:local && npm run client\"",
     "client": "npm run start --prefix client",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,7 +18,8 @@
     "concurrently": "^6.4.0",
     "ethereum-waffle": "^3.4.0",
     "ethers": "^5.5.1",
-    "hardhat": "^2.6.8"
+    "hardhat": "^2.6.8",
+    "wait-on": "^6.0.0"
   },
   "dependencies": {
     "@chainlink/contracts": "^0.2.2",

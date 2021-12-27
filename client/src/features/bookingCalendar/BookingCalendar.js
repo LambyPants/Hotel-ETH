@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
+import { useDebounce, useDebounceCallback } from '@react-hook/debounce';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import { Paper, Button } from '@mui/material';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -6,28 +7,24 @@ import TokenIcon from '@mui/icons-material/Token';
 import RoomServiceIcon from '@mui/icons-material/RoomService';
 import moment from 'moment';
 import { selectShowCalendar } from '../splash/splashSlice';
-import { getMonthlyAvailability } from './bookingCalendarSlice';
-import { toggleModal } from '../useTokens/useTokenSlice';
+import {
+  getRangeAvailability,
+  selectMonthlySchedule,
+} from './bookingCalendarSlice';
+import { toggleModal, toggleSpendTokens } from '../useTokens/useTokenSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import styles from './BookingCalendar.module.css';
 
 const localizer = momentLocalizer(moment);
 
-function handleSelect({ start, end }) {
-  console.log('end: ', end);
-  console.log('start: ', start);
-  // const title = window.prompt('New Event name');
-  // if (title)
-  //   this.setState({
-  //     events: [
-  //       ...this.state.events,
-  //       {
-  //         start,
-  //         end,
-  //         title,
-  //       },
-  //     ],
-  //   });
+function handleSelect({ start, end }, dispatch) {
+  dispatch(
+    toggleSpendTokens({
+      showSpendTokens: true,
+      placeholderStart: start.toISOString().slice(0, 10),
+      placeholderEnd: end.toISOString().slice(0, 10),
+    }),
+  );
 }
 
 const showDayAccessible = (date) => {
@@ -47,37 +44,44 @@ const showDayAccessible = (date) => {
     };
 };
 
-function fetchRangeData(date, dispatch) {
+function fetchRangeData({ start, end }, dispatch) {
+  const normalizedStart = new Date(start.toISOString().slice(0, 10));
+  const normalizedEnd = new Date(end.toISOString().slice(0, 10));
+  const numDays = (normalizedEnd - normalizedStart) / (86400 * 1000);
+  console.log('numDays: ', numDays, normalizedStart);
   dispatch(
-    getMonthlyAvailability({
-      month: date.getMonth() + 1,
-      year: date.getFullYear(),
+    getRangeAvailability({
+      timestamp: normalizedStart / 1000,
+      numDays,
     }),
   );
 }
 
 export function BookingCalendar() {
   const showCalendar = useSelector(selectShowCalendar);
+  const monthlySchedule = useSelector(selectMonthlySchedule);
+  console.log('monthlySchedule: ', monthlySchedule);
   const dispatch = useDispatch();
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (showCalendar) {
-      fetchRangeData(new Date(), dispatch);
+      // react-big-calendar doesn't fire onRangeChange on mount
+      // this is definitely a 'not recommended for production' hack to avoid forking their repo
+      document.querySelector('.rbc-btn-group button').click();
     }
-  }, [showCalendar, dispatch]);
+  }, [showCalendar]);
 
   if (!showCalendar) {
     return '';
   }
   return (
     <Paper className={styles.Calendar} elevation={3}>
-      {/* <Button>Your bookings</Button> */}
       <div className={styles.book}>
         <Button variant="extended" color="secondary" aria-label="add">
           <RoomServiceIcon sx={{ mr: 1 }} />
           Your Reservations
         </Button>
         <Button
-          raised
+          raised="true"
           color="secondary"
           aria-label="add"
           onClick={() => {
@@ -91,24 +95,20 @@ export function BookingCalendar() {
       <Calendar
         views={['month']}
         localizer={localizer}
-        events={[
-          {
-            id: 0,
-            title: 'Occupied',
-            allDay: true,
-            start: new Date(),
-            end: Number(new Date()) + 86400 * 1000,
-          },
-        ]}
+        events={monthlySchedule}
         dayPropGetter={showDayAccessible}
         startAccessor="start"
         endAccessor="end"
+        onRangeChange={(range) => {
+          console.log('range: ', range);
+          fetchRangeData(range, dispatch);
+        }}
         timeslots={1}
         selectable={true}
-        onNavigate={(arg) => {
-          fetchRangeData(arg, dispatch);
+        onSelectSlot={(data) => {
+          console.log('data: ', data);
+          handleSelect(data, dispatch);
         }}
-        onSelectSlot={handleSelect}
       />
     </Paper>
   );

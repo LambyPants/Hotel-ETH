@@ -13,7 +13,6 @@ export const fetchUserBalance = createAsyncThunk(
     try {
       const contractABI = selectHotelABI(thunkAPI.getState());
       const data = (await contractABI.getTokenBalance(address)).toNumber();
-      console.log('data: ', data);
       return data;
     } catch (err) {
       console.log({ err });
@@ -69,7 +68,7 @@ export const { toggleCalendar, resetState } = splashSlice.actions;
 export const hasEthereum = () => window.ethereum;
 export const selectShowCalendar = (state) => state.splash.showCalendar;
 export const selectUserAddress = (state) => state.splash.userAddress;
-export const selectUserBalance = (state) => state.splash.userBalance;
+export const selectUserBalance = (state) => state.splash.userBalance || 0;
 export const selectHotelABI = createSelector([hasEthereum], (eth) =>
   eth ? setContractABI() : {},
 );

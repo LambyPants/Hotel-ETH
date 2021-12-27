@@ -7,15 +7,38 @@ import {
 import { selectHotelABI } from '../splash/splashSlice';
 // import { connectWallet, setContractABI } from './calendarAPI';
 
-export const getMonthlyAvailability = createAsyncThunk(
-  'calendar/getMonthlyAvailability',
-  async ({ month, year }, thunkAPI) => {
+function _incrementTime(t, i) {
+  return (
+    Number(new Date(t * 1000 + i * (86400 * 1000))) +
+    Number(new Date(t).getTimezoneOffset()) * 60 * 1000
+  );
+}
+
+export const getRangeAvailability = createAsyncThunk(
+  'calendar/getRangeAvailability',
+  async ({ timestamp, numDays }, thunkAPI) => {
+    console.log('timestamp: ', timestamp, numDays);
     try {
       const contractABI = selectHotelABI(thunkAPI.getState());
-      console.log('contractABI: ', contractABI);
-      const data = await contractABI.getMonthlyAvailability(month, year);
-      console.log('data: ', data);
-      return data;
+      const data = await contractABI.getRangeAvailability(timestamp, numDays);
+      const obj = {};
+      data.forEach((rawVal, index) => {
+        const num = rawVal.toNumber();
+        if (num > 0) {
+          if (obj[num]) {
+            obj[num].end = _incrementTime(timestamp, index + 1);
+          } else {
+            obj[num] = {
+              title: 'Occupied',
+              allDay: true,
+              start: _incrementTime(timestamp, index),
+              end: _incrementTime(timestamp, index),
+            };
+          }
+        }
+      });
+      console.log(obj);
+      return Object.keys(obj).map((key) => obj[key]);
     } catch (err) {
       console.log({ err });
       return [];
@@ -36,16 +59,23 @@ export const bookingCalendar = createSlice({
     // },
   },
   extraReducers: (builder) => {
-    builder.addCase(getMonthlyAvailability.fulfilled, (state, action) => {
+    builder.addCase(getRangeAvailability.fulfilled, (state, action) => {
       const events = action.payload;
-      console.log(action.payload);
       return { ...state, events };
     });
   },
 });
 
 // export const { toggleCalendar, resetState } = bookingCalendar.actions;
-
+// [
+//   {
+//     id: 0,
+//     title: 'Occupied',
+//     allDay: true,
+//     start: new Date(),
+//     end: Number(new Date()) + 86400 * 1000,
+//   },
+// ];
 export const selectMonthlySchedule = (state) => state.calendar.events;
 
 export default bookingCalendar.reducer;

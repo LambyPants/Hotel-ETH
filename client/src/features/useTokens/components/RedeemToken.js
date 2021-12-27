@@ -11,43 +11,73 @@ function _calcNumTokens(s, e) {
   return (e - s) / 86400000; // number of days between start and end
 }
 
+function _stringToDateNum(s) {
+  return Number(new Date(s));
+}
+
 export function RedeemToken({
   userBalance,
   showSpendTokens,
   closeModal,
   redeemToken,
+  checkTokenRange,
+  tokenLoading,
+  placeholderDates,
 }) {
-  const [errorMessage, setErrorMessage] = useState('');
-  const [startDate, setStartDate] = useState();
-  const [endDate, setEndDate] = useState();
+  const { start, end } = placeholderDates;
+  const [alertMessage, setMessage] = useState('');
+  const [startDate, setStartDate] = useState(_stringToDateNum(start));
+  const [endDate, setEndDate] = useState(_stringToDateNum(end));
+  const [isValid, setIsValid] = useState(false);
+  const [hasCheckedRange, setCheckedRange] = useState(false);
+  console.log({ startDate, endDate });
   const [partyName, setPartyName] = useState('Anonymous');
   useEffect(() => {
-    async function _testRedeemTokens(abiFunctionality) {
-      console.log('abiFunctionality: ', abiFunctionality);
+    async function _testRedeemTokens(checkTokenRange) {
+      const numDays = _calcNumTokens(startDate, endDate);
+      console.log('checkTokenRange: ', checkTokenRange);
       const data = {
-        name: partyName || 'Anonymous',
+        name: 'Anonymous',
         timestamp: startDate / 1000,
-        numDays: _calcNumTokens(startDate, endDate),
-        testTransaction: false,
+        numDays,
       };
-      const res = await abiFunctionality(data);
+      const res = await checkTokenRange(data);
       console.log('res: ', res);
-      return res;
-    }
-    // require both start and end to exist
-    if (startDate && endDate) {
-      if (startDate > endDate) {
-        setErrorMessage('Start date cannot be before end date');
-      } else if (notEnoughTokens(userBalance, startDate, endDate)) {
-        setErrorMessage('You do not have enough tokens for that date range');
-      } else if (_testRedeemTokens(redeemToken)) {
-        console.log('sd');
-        setErrorMessage('');
+      if (res) {
+        setIsValid(true);
+        setMessage(`You will use ${numDays} token(s)`);
+      } else {
+        setMessage('Date range overlaps with another booking');
+        setIsValid(false);
       }
     }
-  }, [startDate, endDate, userBalance]);
+    // require both start and end to exist
+    if (startDate && endDate && !tokenLoading) {
+      if (startDate > endDate) {
+        setMessage('Start date cannot be before end date');
+        setIsValid(false);
+      } else if (startDate < new Date(new Date().toISOString().slice(0, 10))) {
+        setMessage('Start date cannot be before today');
+        setIsValid(false);
+      } else if (notEnoughTokens(userBalance, startDate, endDate)) {
+        setMessage('You do not have enough tokens for that date range');
+        setIsValid(false);
+      } else if (!hasCheckedRange) {
+        setCheckedRange(true);
+        console.log('VALIDATE DATA');
+        _testRedeemTokens(checkTokenRange);
+      }
+    }
+  }, [
+    startDate,
+    endDate,
+    userBalance,
+    tokenLoading,
+    checkTokenRange,
+    hasCheckedRange,
+  ]);
 
-  if (showSpendTokens) {
+  if (!showSpendTokens) {
     return '';
   }
 
@@ -70,10 +100,8 @@ export function RedeemToken({
           alignItems="center"
           className={styles.alert}
         >
-          <Alert severity={errorMessage ? 'error' : 'info'}>
-            {errorMessage
-              ? errorMessage
-              : 'You can redeem 1 token for 1 night of accomodation'}
+          <Alert severity={!isValid && !tokenLoading ? 'error' : 'info'}>
+            {alertMessage ? alertMessage : 'Checking availability...'}
           </Alert>
         </Grid>
       </Box>
@@ -95,24 +123,24 @@ export function RedeemToken({
       >
         <TextField
           type="date"
-          error={Boolean(errorMessage)}
+          error={!isValid}
           helperText="Accomodation start date"
           id="date-start"
+          defaultValue={placeholderDates.start}
           onChange={(e) => {
-            const date = new Date(e.target.value);
-            console.log('date: ', Number(date));
-            setStartDate(Number(date));
+            setCheckedRange(false);
+            setStartDate(_stringToDateNum(e.target.value));
           }}
         ></TextField>
         <TextField
           type="date"
-          error={Boolean(errorMessage)}
+          error={!isValid}
           helperText="Accomodation end date"
           id="date-end"
+          defaultValue={placeholderDates.end}
           onChange={(e) => {
-            const date = new Date(e.target.value);
-            console.log('date: ', Number(date));
-            setEndDate(Number(date));
+            setCheckedRange(false);
+            setEndDate(_stringToDateNum(e.target.value));
           }}
         ></TextField>
       </Grid>
@@ -120,15 +148,13 @@ export function RedeemToken({
         <Button
           variant="contained"
           color="secondary"
-          disabled={!startDate || !endDate || Boolean(errorMessage)}
+          disabled={!startDate || !endDate || !isValid || tokenLoading}
           onClick={() => {
             const data = {
               name: partyName || 'Anonymous',
               timestamp: startDate / 1000,
               numDays: _calcNumTokens(startDate, endDate),
-              testTransaction: false,
             };
-            console.log(data);
             redeemToken(data);
           }}
         >

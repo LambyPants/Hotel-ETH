@@ -27,13 +27,15 @@ contract Hotel {
     uint64 public bookingTokenPrice;
     // minimum year someone can schedule an appointment
     uint256 CONTRACT_DEPLOY_TIME;
+    // helps create eventIDs
+    uint256 eventTicker;
     // used to determine amount of ETH to send in transaction
     AggregatorV3Interface internal priceFeed;
     // primary appointment storage
     struct Appointment {
         bool isAppointment;
         string partyName;
-        address customerAddress;
+        uint256 eventID;
     }
     // this contract uses epoch/unix time to determine booking days; keys must be mod 86400
     mapping(uint256 => Appointment) scheduleByTimestamp;
@@ -64,18 +66,25 @@ contract Hotel {
     }
     // day is a valid 1 - 31 number value
     modifier validDay(uint8 _d) {
-        require(_d > 0 && _d < 32, "invalid day");
+        require(_d > 0 && _d < 32, "Invalid day");
         _;
     }
     // numDays > 0
     modifier validNumDays(uint8 _num) {
-        require(_num > 0, "must be a value above 0");
+        require(_num > 0, "Must be a value above 0");
         _;
     }
     // timestamp cannot be before CONTRACT_DEPLOY_TIME && must be mod 0
     // this is because we use unix days as our mapping keys
     modifier validTimestamp(uint256 _t) {
         validateTimestamp(_t);
+        _;
+    }
+
+    // valid read range - can't request more than 365 days at a time and timestamp must be mod 86400
+    modifier validRange(uint256 _t, uint8 _r) {
+        isMod86400(_t);
+        require(_r <= 365 && _r > 0, "Valid ranges are 1 - 365");
         _;
     }
 
@@ -88,6 +97,7 @@ contract Hotel {
     constructor(uint64 _initialPrice) {
         CONTRACT_DEPLOY_TIME = block.timestamp;
         bookingToken = new BookingToken(address(this));
+        eventTicker = 1;
         owner = msg.sender;
         // Rinkeby ETH/USD
         priceFeed = AggregatorV3Interface(
@@ -105,6 +115,10 @@ contract Hotel {
             _t > CONTRACT_DEPLOY_TIME,
             "Cannot use any timestamp before the contract deploy timestamp"
         );
+        isMod86400(_t);
+    }
+
+    function isMod86400(uint256 _t) private pure {
         require(
             _t.mod(86400) == 0,
             "Timestamp must be mod 86400; try using getUnixTimestamp for a given month, day, year"
@@ -129,49 +143,27 @@ contract Hotel {
         return bookingToken.balanceOf(_address);
     }
 
-    /// @notice Returns an array of bool values for each day within a given month; false is unbooked, true is booked
-    /// @dev Notice: February can have 28 days; other months return 30 || 31 items
-    /// @return bool[]
-    function getMonthlyAvailability(uint8 _month, uint16 _year)
+    /// @notice Returns an array of eventIDs for a given range
+    /// @return eventID[uint256]
+    function getRangeAvailability(uint256 _start, uint8 _numDays)
         public
         view
-        returns (bool[] memory)
+        validRange(_start, _numDays)
+        returns (uint256[] memory)
     {
         uint8 i = 0;
-        uint8 daysInMonth = calculateDaysInMonth(_month, _year);
-        // get the timestamp for the 1st of the month
-        uint256 _timestamp = dateTime.toTimestamp(_year, _month, 1);
         // up to 31 days in a month
-        bool[] memory monthlyAppointments = new bool[](daysInMonth);
-        for (i; i < calculateDaysInMonth(_month, _year); i++) {
-            if (scheduleByTimestamp[_timestamp + (i * 86400)].isAppointment) {
-                monthlyAppointments[i] = true;
+        uint256[] memory monthlyAppointments = new uint256[](_numDays);
+        for (i; i < _numDays; i++) {
+            Appointment memory foundAppointment = scheduleByTimestamp[
+                _start + (i * 86400)
+            ];
+            if (foundAppointment.isAppointment) {
+                monthlyAppointments[i] = foundAppointment.eventID;
             }
         }
         // returns an array with the correct number of days
         return monthlyAppointments;
-    }
-
-    /// @notice Returns number of days in a month
-    /// @dev month must > 0 < 13 note that the dateTime library has a similar function but I already wrote this and like this one slightly more since it has requires
-    /// @return uint8 of 28, 30, or 31
-    function calculateDaysInMonth(uint8 _m, uint16 _y)
-        internal
-        view
-        validMonth(_m)
-        returns (uint8)
-    {
-        require(_m > 0 && _m < 13, "Must be 1 - 12 value");
-        // February, April, June, September, November have 30 days
-        if (_m == 2 || _m == 4 || _m == 6 || _m == 9 || _m == 11) {
-            return 31;
-        } else if (_m == 2) {
-            // February can be a leap year which is annoying
-            return dateTime.isLeapYear(_y) ? 29 : 28;
-        } else {
-            // January, March, May, July, August, October, and December have 31 days
-            return 30;
-        }
     }
 
     /// @notice Allows user to schedule an appointment per the year -> month -> day datamodel
@@ -205,12 +197,12 @@ contract Hotel {
             scheduleByTimestamp[_timestamp + (86400 * i)] = Appointment(
                 true,
                 _name,
-                msg.sender
+                eventTicker
             );
             // save all user timestamps in array
             userBookings[msg.sender].push(_timestamp);
         }
-
+        eventTicker += 1;
         emit AppointmentScheduled(msg.sender, _timestamp, _numDays);
     }
 

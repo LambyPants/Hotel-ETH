@@ -10,7 +10,10 @@ import {
   buyNumTokens,
   selectTokenPriceUSD,
   selectTokenPriceEth,
+  selectPlaceholderDates,
   redeemTokens,
+  checkTokenRange,
+  selectTokenLoading,
 } from './useTokenSlice';
 import { selectUserBalance } from '../splash/splashSlice';
 import { BuyToken } from './components/BuyTokens';
@@ -24,12 +27,14 @@ export function UseToken() {
   const dispatch = useDispatch();
   const userBalance = useSelector(selectUserBalance);
   const showSpendTokens = useSelector(selectShowSpendTokens);
+  const placeholderDates = useSelector(selectPlaceholderDates);
+  const tokenLoading = useSelector(selectTokenLoading);
 
   useEffect(() => {
-    if (showModal) {
+    if (showModal && !showSpendTokens) {
       dispatch(getBookingTokenPrice());
     }
-  }, [showModal, dispatch]);
+  }, [showModal, showSpendTokens, dispatch]);
   return (
     <Modal
       open={showModal}
@@ -47,6 +52,7 @@ export function UseToken() {
             showSpendTokens={showSpendTokens}
             usdPrice={usdPrice}
             ethPrice={ethPrice}
+            tokenLoading={tokenLoading}
             buyToken={async (arg) => {
               await dispatch(buyNumTokens(arg));
               dispatch(toggleModal(!showModal));
@@ -58,11 +64,18 @@ export function UseToken() {
           <RedeemToken
             userBalance={userBalance}
             showSpendTokens={showSpendTokens}
+            placeholderDates={placeholderDates}
+            tokenLoading={tokenLoading}
             redeemToken={async (dataObj) => {
-              const res = await dispatch(redeemTokens(dataObj));
-              if (res) {
+              const { payload } = await dispatch(redeemTokens(dataObj));
+              console.log('res: ', payload);
+              if (payload) {
                 dispatch(toggleModal(!showModal));
               }
+            }}
+            checkTokenRange={async (dataObj) => {
+              const { payload } = await dispatch(checkTokenRange(dataObj));
+              return payload;
             }}
             closeModal={() => {
               dispatch(toggleModal(!showModal));
