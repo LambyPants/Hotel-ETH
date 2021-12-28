@@ -1,6 +1,10 @@
 import { ethers } from 'ethers';
 import { createSlice, createAsyncThunk, isAnyOf } from '@reduxjs/toolkit';
-import { selectHotelABI } from '../splash/splashSlice';
+import {
+  fetchUserBalance,
+  selectHotelABI,
+  selectUserAddress,
+} from '../splash/splashSlice';
 
 export const getBookingTokenPrice = createAsyncThunk(
   'token/getBookingPrice',
@@ -33,6 +37,9 @@ export const buyNumTokens = createAsyncThunk(
       if (receipt.status === 0) {
         throw new Error('Transaction failed');
       }
+      // fetch the users balance upon successful purchase of tokens
+      const userAddress = selectUserAddress(thunkAPI.getState());
+      thunkAPI.dispatch(fetchUserBalance(userAddress));
       return true;
     } catch (err) {
       console.log({ err });

@@ -2,20 +2,11 @@ import React, { useState } from 'react';
 import { Grid, Box, Typography, TextField, Button, Alert } from '@mui/material';
 import styles from '../UseTokens.module.css';
 
-export function BuyToken({
-  showSpendTokens,
-  ethPrice,
-  usdPrice,
-  closeModal,
-  buyToken,
-}) {
+export function BuyToken({ ethPrice, usdPrice, closeModal, buyToken }) {
   const [isError, setError] = useState(false);
   const [currVal, setVal] = useState(1);
   const [userTyped, setUserTyped] = useState(false);
 
-  if (showSpendTokens) {
-    return '';
-  }
   return (
     <Grid
       className={styles.innerContent}

@@ -17,7 +17,6 @@ function _stringToDateNum(s) {
 
 export function RedeemToken({
   userBalance,
-  showSpendTokens,
   closeModal,
   redeemToken,
   checkTokenRange,
@@ -76,11 +75,6 @@ export function RedeemToken({
     checkTokenRange,
     hasCheckedRange,
   ]);
-
-  if (!showSpendTokens) {
-    return '';
-  }
-
   return (
     <Grid
       className={styles.innerContent}
@@ -123,7 +117,7 @@ export function RedeemToken({
       >
         <TextField
           type="date"
-          error={!isValid}
+          error={!isValid && !tokenLoading}
           helperText="Accomodation start date"
           id="date-start"
           defaultValue={placeholderDates.start}
@@ -134,7 +128,7 @@ export function RedeemToken({
         ></TextField>
         <TextField
           type="date"
-          error={!isValid}
+          error={!isValid && !tokenLoading}
           helperText="Accomodation end date"
           id="date-end"
           defaultValue={placeholderDates.end}

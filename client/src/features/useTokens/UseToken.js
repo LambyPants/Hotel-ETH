@@ -48,39 +48,40 @@ export function UseToken() {
     >
       <div>
         <Paper className={styles.content}>
-          <BuyToken
-            showSpendTokens={showSpendTokens}
-            usdPrice={usdPrice}
-            ethPrice={ethPrice}
-            tokenLoading={tokenLoading}
-            buyToken={async (arg) => {
-              await dispatch(buyNumTokens(arg));
-              dispatch(toggleModal(!showModal));
-            }}
-            closeModal={() => {
-              dispatch(toggleModal(!showModal));
-            }}
-          />
-          <RedeemToken
-            userBalance={userBalance}
-            showSpendTokens={showSpendTokens}
-            placeholderDates={placeholderDates}
-            tokenLoading={tokenLoading}
-            redeemToken={async (dataObj) => {
-              const { payload } = await dispatch(redeemTokens(dataObj));
-              console.log('res: ', payload);
-              if (payload) {
+          {!showSpendTokens ? (
+            <BuyToken
+              usdPrice={usdPrice}
+              ethPrice={ethPrice}
+              tokenLoading={tokenLoading}
+              buyToken={async (arg) => {
+                await dispatch(buyNumTokens(arg));
                 dispatch(toggleModal(!showModal));
-              }
-            }}
-            checkTokenRange={async (dataObj) => {
-              const { payload } = await dispatch(checkTokenRange(dataObj));
-              return payload;
-            }}
-            closeModal={() => {
-              dispatch(toggleModal(!showModal));
-            }}
-          />
+              }}
+              closeModal={() => {
+                dispatch(toggleModal(!showModal));
+              }}
+            />
+          ) : (
+            <RedeemToken
+              userBalance={userBalance}
+              placeholderDates={placeholderDates}
+              tokenLoading={tokenLoading}
+              redeemToken={async (dataObj) => {
+                const { payload } = await dispatch(redeemTokens(dataObj));
+                console.log('res: ', payload);
+                if (payload) {
+                  dispatch(toggleModal(!showModal));
+                }
+              }}
+              checkTokenRange={async (dataObj) => {
+                const { payload } = await dispatch(checkTokenRange(dataObj));
+                return payload;
+              }}
+              closeModal={() => {
+                dispatch(toggleModal(!showModal));
+              }}
+            />
+          )}
         </Paper>
       </div>
     </Modal>

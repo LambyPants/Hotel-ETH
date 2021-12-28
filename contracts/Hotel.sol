@@ -27,7 +27,7 @@ contract Hotel {
     uint64 public bookingTokenPrice;
     // minimum year someone can schedule an appointment
     uint256 CONTRACT_DEPLOY_TIME;
-    // helps create eventIDs
+    // helps create eventIDs which let us know if a range of bookings belong to a single user
     uint256 eventTicker;
     // used to determine amount of ETH to send in transaction
     AggregatorV3Interface internal priceFeed;
@@ -37,11 +37,16 @@ contract Hotel {
         string partyName;
         uint256 eventID;
     }
+    // user appointment info - saved in userBookings array
+    struct UserBooking {
+        uint256 timestamp;
+        uint256 numDays;
+    }
     // this contract uses epoch/unix time to determine booking days; keys must be mod 86400
     mapping(uint256 => Appointment) scheduleByTimestamp;
     // list of all timestamps for a given user; key is user address
     // set an array length if you are worried about variable gas consumption
-    mapping(address => uint256[]) userBookings;
+    mapping(address => UserBooking[]) public userBookings;
     // emitted when user changes
     event OwnerChanged(address indexed from, address to);
     // emitted when price of the token changes
@@ -143,6 +148,17 @@ contract Hotel {
         return bookingToken.balanceOf(_address);
     }
 
+    /// @notice Helper to return all bookings for a given address
+    /// @dev userBookings is a dynamic array, so this function is meant to be read-only and should not be used in any state-altering functionality
+    /// @return Array[]
+    function getAppointmentsByUser(address _addr)
+        public
+        view
+        returns (UserBooking[] memory)
+    {
+        return userBookings[_addr];
+    }
+
     /// @notice Returns an array of eventIDs for a given range
     /// @return eventID[uint256]
     function getRangeAvailability(uint256 _start, uint8 _numDays)
@@ -199,8 +215,8 @@ contract Hotel {
                 _name,
                 eventTicker
             );
-            // save all user timestamps in array
-            userBookings[msg.sender].push(_timestamp);
+            // save all user timestamps in array - we can use the timestamp + numDays as keys to our primary Appointment mapping
+            userBookings[msg.sender].push(UserBooking(_timestamp, _numDays));
         }
         eventTicker += 1;
         emit AppointmentScheduled(msg.sender, _timestamp, _numDays);

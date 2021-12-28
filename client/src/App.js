@@ -4,6 +4,7 @@ import './App.css';
 import { Splash } from './features/splash/Splash';
 import { BookingCalendar } from './features/bookingCalendar/BookingCalendar';
 import { UseToken } from './features/useTokens/UseToken';
+import { DappWrapper } from './features/dappWrapper/DappWrapper';
 
 function App() {
   // if (window.ethereum === undefined) {
@@ -11,9 +12,11 @@ function App() {
   // }
   return (
     <div className="App">
-      <Splash />
-      <BookingCalendar />
-      <UseToken />
+      <DappWrapper>
+        <Splash />
+        <BookingCalendar />
+        <UseToken />
+      </DappWrapper>
     </div>
   );
 }

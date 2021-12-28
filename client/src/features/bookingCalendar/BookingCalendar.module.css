@@ -15,3 +15,13 @@
   /* position: absolute;
   right: 0; */
 }
+
+.table {
+  max-height: calc(100% - 48px);
+  margin-top: 8px;
+  overflow-y: auto;
+}
+
+.flex:not([hidden]) {
+  display: flex;
+}

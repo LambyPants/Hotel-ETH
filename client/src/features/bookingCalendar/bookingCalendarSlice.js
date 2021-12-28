@@ -4,6 +4,7 @@ import {
   createSelector,
   createAsyncThunk,
 } from '@reduxjs/toolkit';
+import { ethers } from 'ethers';
 import { selectHotelABI } from '../splash/splashSlice';
 // import { connectWallet, setContractABI } from './calendarAPI';
 
@@ -14,13 +15,22 @@ function _incrementTime(t, i) {
   );
 }
 
+function _calcBN(hex) {
+  return ethers.BigNumber.from(hex).toNumber();
+}
+
 export const getRangeAvailability = createAsyncThunk(
   'calendar/getRangeAvailability',
   async ({ timestamp, numDays }, thunkAPI) => {
     console.log('timestamp: ', timestamp, numDays);
+    console.log('numDays: ', numDays);
     try {
       const contractABI = selectHotelABI(thunkAPI.getState());
-      const data = await contractABI.getRangeAvailability(timestamp, numDays);
+      const data = await contractABI.getRangeAvailability(
+        timestamp,
+        Number(numDays),
+      );
+      console.log('data: ', data);
       const obj = {};
       data.forEach((rawVal, index) => {
         const num = rawVal.toNumber();
@@ -38,7 +48,29 @@ export const getRangeAvailability = createAsyncThunk(
         }
       });
       console.log(obj);
-      return Object.keys(obj).map((key) => obj[key]);
+      return {
+        events: Object.keys(obj).map((key) => obj[key]),
+        prevCallData: { timestamp, numDays },
+      };
+    } catch (err) {
+      console.log({ err });
+      return [];
+    }
+  },
+);
+
+export const fetchUserBookings = createAsyncThunk(
+  'calendar/getUserBookings',
+  async (userAddress, thunkAPI) => {
+    try {
+      const contractABI = selectHotelABI(thunkAPI.getState());
+      console.log('contractABI: ', contractABI);
+      const data = await contractABI.getAppointmentsByUser(userAddress);
+      return data.flatMap((data) => ({
+        checkIn: _incrementTime(_calcBN(data[0]), 0),
+        checkOut: _incrementTime(_calcBN(data[0]), 1),
+        numDays: _calcBN(data[1]),
+      }));
     } catch (err) {
       console.log({ err });
       return [];
@@ -48,25 +80,32 @@ export const getRangeAvailability = createAsyncThunk(
 
 const initialState = {
   events: [],
+  userBookings: [],
+  showUserBookings: false,
+  prevCallData: { timestamp: 0, numDays: 0 },
 };
 export const bookingCalendar = createSlice({
   name: 'calendar',
   initialState,
   reducers: {
-    // toggleCalendar(state, action) {
-    //   const showCalendar = action.payload;
-    //   return { ...state, showCalendar };
-    // },
+    toggleUserBookings(state, action) {
+      const showUserBookings = action.payload;
+      return { ...state, showUserBookings };
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getRangeAvailability.fulfilled, (state, action) => {
-      const events = action.payload;
-      return { ...state, events };
+      const { events, prevCallData } = action.payload;
+      return { ...state, events, prevCallData };
+    });
+    builder.addCase(fetchUserBookings.fulfilled, (state, action) => {
+      const userBookings = action.payload;
+      return { ...state, userBookings };
     });
   },
 });
 
-// export const { toggleCalendar, resetState } = bookingCalendar.actions;
+export const { toggleUserBookings } = bookingCalendar.actions;
 // [
 //   {
 //     id: 0,
@@ -77,5 +116,9 @@ export const bookingCalendar = createSlice({
 //   },
 // ];
 export const selectMonthlySchedule = (state) => state.calendar.events;
+export const selectUserBookings = (state) => state.calendar.userBookings;
+export const selectPrevCallData = (state) => state.calendar.prevCallData;
+export const selectShowUserBookings = (state) =>
+  state.calendar.showUserBookings;
 
 export default bookingCalendar.reducer;
