@@ -1,5 +1,5 @@
 .wrapper {
-  background-image: url('http://i.imgur.com/K3mPv14.jpg');
+  background-image: url('https://ik.imagekit.io/125hl1956/Side_Projects/patrick-robert-doyle-AH8zKXqFITA-unsplash__iAyXIciD4I.jpg?updatedAt=1640784819639');
   height: 100vh;
   width: 100%;
   background-position: center;
@@ -13,6 +13,9 @@
 
 .wrapper > .textContainer > button {
   margin-top: 8px;
+}
+.wrapper > .textContainer > button.scheduleButton {
+  color: white;
 }
 
 .warning {
@@ -35,6 +38,8 @@
 
 .text {
   color: white;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+    1px 1px 0 #000;
 }
 
 .chip {
@@ -43,23 +48,17 @@
   top: 16px;
 }
 
-/* .wrapper {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  background-size: cover;
-  background-position: 50% 50%;
-  background-repeat: no-repeat;
-  height: 100vh;
-
-  z-index: 0;
-  background-image: url('http://i.imgur.com/K3mPv14.jpg');
-
-  animation: imageAnimation 50s linear infinite;
+@media (max-width: 576px) {
+  h1.text {
+    font-size: 3rem;
+  }
+  h6.text {
+    font-size: 1rem;
+  }
+  .chip div:nth-child(1) {
+    max-width: 70%;
+  }
+  .chip div:nth-child(2) {
+    max-width: 100px;
+  }
 }
-
-.slideshow li:nth-child(1) {
-  background-image: url(http://i.imgur.com/K3mPv14.jpg);
-} */

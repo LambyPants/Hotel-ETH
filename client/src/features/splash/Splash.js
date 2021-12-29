@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { makeStyles } from '@mui/styles';
 import { useSelector, useDispatch } from 'react-redux';
 
 import {
@@ -15,23 +14,6 @@ import styles from './Splash.module.css';
 import { WalletChip } from './components/WalletChip';
 import { WelcomeMessage } from './components/WelcomeMessage';
 import { NoEthereumError } from './components/NoEthereumError';
-
-const themeOverrides = makeStyles((theme) => ({
-  title: {
-    color: 'white',
-    // display: 'none',
-    // [theme.breakpoints.up('sm')]: {
-    //   display: 'block',
-    // },
-  },
-}));
-
-function _startPollingData() {
-  this._pollDataInterval = setInterval(() => this._updateBalance(), 1000);
-
-  // We run it once immediately so we don't have to wait for it
-  this._updateBalance();
-}
 
 export function Splash() {
   const [open, setOpen] = useState(true);
@@ -65,6 +47,7 @@ export function Splash() {
       <WelcomeMessage
         showCalendar={showCalendar}
         handleConnectEthereum={() => dispatch(connectEthereum())}
+        handleDemoConnect={() => dispatch(connectEthereum(true))}
       />
 
       <div className={styles.warning}>

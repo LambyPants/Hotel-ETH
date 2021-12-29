@@ -14,6 +14,7 @@ body,
 #root {
   height: 100%;
   width: 100%;
+  overflow: hidden;
 }
 
 code {
@@ -33,4 +34,16 @@ div.rbc-toolbar > span:nth-child(3) {
 .App div.rbc-calendar {
   height: calc(100% - 48px);
   margin-bottom: 10px;
+  font-family: 'Roboto';
+}
+
+.App .rbc-event {
+  background-color: #1b76d2;
+}
+
+.App .available-day:hover,
+.available-day.rbc-selected-cell {
+  background: #9c27b0;
+  opacity: 0.3;
+  transition: background 0.3s ease;
 }

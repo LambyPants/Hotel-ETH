@@ -6,6 +6,12 @@ import {
   selectUserAddress,
 } from '../splash/splashSlice';
 
+const _refreshUserBalance = (thunkAPI) => {
+  // fetch the users balance upon successful purchase of tokens
+  const userAddress = selectUserAddress(thunkAPI.getState());
+  thunkAPI.dispatch(fetchUserBalance(userAddress));
+};
+
 export const getBookingTokenPrice = createAsyncThunk(
   'token/getBookingPrice',
   async (arg, thunkAPI) => {
@@ -17,10 +23,11 @@ export const getBookingTokenPrice = createAsyncThunk(
       const ethPrice = ethers.utils.formatEther(
         await contractABI.getEthPriceForTokens(1),
       );
+      console.log('ethPrice: ', ethPrice);
       return { usdPrice, ethPrice };
     } catch (err) {
       console.log({ err });
-      return 0;
+      return { usdPrice: 0, ethPrice: 0 };
     }
   },
 );
@@ -31,15 +38,13 @@ export const buyNumTokens = createAsyncThunk(
     try {
       const contractABI = selectHotelABI(thunkAPI.getState());
       const tx = await contractABI.buyTokens(num, {
-        value: ethers.utils.parseEther('1.0'),
+        value: ethers.utils.parseEther('10.0'),
       });
       const receipt = await tx.wait();
       if (receipt.status === 0) {
         throw new Error('Transaction failed');
       }
-      // fetch the users balance upon successful purchase of tokens
-      const userAddress = selectUserAddress(thunkAPI.getState());
-      thunkAPI.dispatch(fetchUserBalance(userAddress));
+      _refreshUserBalance(thunkAPI);
       return true;
     } catch (err) {
       console.log({ err });
@@ -79,6 +84,7 @@ export const redeemTokens = createAsyncThunk(
       if (receipt.status === 0) {
         throw new Error('Transaction failed');
       }
+      _refreshUserBalance(thunkAPI);
       return true;
     } catch (err) {
       console.log({ err });

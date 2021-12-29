@@ -1,11 +1,6 @@
-import React, {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useLayoutEffect } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
-import { Paper, Button, Fade } from '@mui/material';
+import { Paper, Button, Fade, Slide } from '@mui/material';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import TokenIcon from '@mui/icons-material/Token';
 import RoomServiceIcon from '@mui/icons-material/RoomService';
@@ -24,6 +19,7 @@ import { toggleModal, toggleSpendTokens } from '../useTokens/useTokenSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import styles from './BookingCalendar.module.css';
 import { UserAppointments } from './components/UserAppointments';
+import { TouchCellWrapper } from './components/TouchCellWrapper';
 
 const localizer = momentLocalizer(moment);
 
@@ -40,16 +36,25 @@ function handleSelect({ start, end }, dispatch) {
 const showDayAccessible = (date) => {
   if (date < Number(new Date()) - 86400 * 1000)
     return {
-      className: 'special-day',
+      className: 'past-day',
       style: {
-        border: '1px dashed gray',
+        cursor: 'not-allowed',
       },
     };
   else
     return {
-      className: 'special-day',
+      className: 'available-day',
       style: {
         cursor: 'pointer',
+      },
+    };
+};
+
+const modifyEventColor = (event) => {
+  if (event.title === 'Your Booking')
+    return {
+      style: {
+        backgroundColor: '#9c27b0',
       },
     };
 };
@@ -70,10 +75,10 @@ function fetchRangeData({ start, end }, dispatch) {
 export function BookingCalendar() {
   const showCalendar = useSelector(selectShowCalendar);
   const monthlySchedule = useSelector(selectMonthlySchedule);
+  console.log('monthlySchedule: ', monthlySchedule);
   const showUserBookings = useSelector(selectShowUserBookings);
   const userBookings = useSelector(selectUserBookings);
   const userAddress = useSelector(selectUserAddress);
-  console.log('monthlySchedule: ', monthlySchedule);
   const dispatch = useDispatch();
   useLayoutEffect(() => {
     if (showCalendar) {
@@ -87,17 +92,35 @@ export function BookingCalendar() {
   useEffect(() => {
     if (showUserBookings) {
       dispatch(fetchUserBookings(userAddress));
-    } else {
     }
   }, [showUserBookings, dispatch, userAddress]);
-
   const renderSubcomponent = useCallback(() => {
     return !showUserBookings ? (
       <Calendar
+        components={{
+          dateCellWrapper: (props) => (
+            <TouchCellWrapper
+              {...props}
+              onSelectSlot={({ action, slots }) => {
+                setTimeout(() => {
+                  if (action === 'click') {
+                    const [start, end] = slots;
+                    const data = {
+                      start,
+                      end: end || new Date(Number(start) + 86400 * 1000),
+                    };
+                    handleSelect(data, dispatch);
+                  }
+                }, 0);
+              }}
+            />
+          ),
+        }}
         views={['month']}
         localizer={localizer}
         events={monthlySchedule}
         dayPropGetter={showDayAccessible}
+        eventPropGetter={modifyEventColor}
         startAccessor="start"
         endAccessor="end"
         onRangeChange={(range) => {
@@ -106,53 +129,49 @@ export function BookingCalendar() {
         timeslots={1}
         selectable={true}
         onSelectSlot={(data) => {
-          console.log('data: ', data);
           handleSelect(data, dispatch);
         }}
       />
     ) : (
       <Fade in={showUserBookings}>
         <div className={styles.table}>
-          <UserAppointments userBookings={userBookings} />,
+          <UserAppointments userBookings={userBookings} />
         </div>
       </Fade>
     );
   }, [dispatch, monthlySchedule, showUserBookings, userBookings]);
 
-  if (!showCalendar) {
-    return '';
-  }
-
   return (
-    <Paper className={styles.Calendar} elevation={3}>
-      <div className={styles.book}>
-        <Button
-          variant="extended"
-          color="secondary"
-          aria-label="Back"
-          onClick={() => dispatch(toggleUserBookings(!showUserBookings))}
-        >
-          <span className={styles.flex} hidden={showUserBookings}>
-            <TodayIcon /> Back to Calendar
-          </span>
-          <span className={styles.flex} hidden={!showUserBookings}>
-            <RoomServiceIcon />
-            Your Reservations
-          </span>
-        </Button>
-        <Button
-          raised="true"
-          color="secondary"
-          aria-label="add"
-          onClick={() => {
-            dispatch(toggleModal(true));
-          }}
-        >
-          <TokenIcon sx={{ mr: 1 }} />
-          Buy Tokens
-        </Button>
-      </div>
-      {renderSubcomponent()}
-    </Paper>
+    <Slide direction="up" in={showCalendar} unmountOnExit>
+      <Paper className={styles.Calendar} elevation={3}>
+        <div className={styles.book}>
+          <Button
+            variant="text"
+            color="primary"
+            aria-label="Back"
+            onClick={() => dispatch(toggleUserBookings(!showUserBookings))}
+          >
+            <span className={styles.flex} hidden={!showUserBookings}>
+              <TodayIcon /> Back to Calendar
+            </span>
+            <span className={styles.flex} hidden={showUserBookings}>
+              <RoomServiceIcon />
+              Your Reservations
+            </span>
+          </Button>
+          <Button
+            color="secondary"
+            aria-label="add"
+            onClick={() => {
+              dispatch(toggleModal(true));
+            }}
+          >
+            <TokenIcon sx={{ mr: 1 }} />
+            Buy Tokens
+          </Button>
+        </div>
+        {renderSubcomponent()}
+      </Paper>
+    </Slide>
   );
 }

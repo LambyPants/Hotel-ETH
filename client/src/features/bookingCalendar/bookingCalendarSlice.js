@@ -5,7 +5,7 @@ import {
   createAsyncThunk,
 } from '@reduxjs/toolkit';
 import { ethers } from 'ethers';
-import { selectHotelABI } from '../splash/splashSlice';
+import { selectHotelABI, selectUserAddress } from '../splash/splashSlice';
 // import { connectWallet, setContractABI } from './calendarAPI';
 
 function _incrementTime(t, i) {
@@ -22,24 +22,33 @@ function _calcBN(hex) {
 export const getRangeAvailability = createAsyncThunk(
   'calendar/getRangeAvailability',
   async ({ timestamp, numDays }, thunkAPI) => {
-    console.log('timestamp: ', timestamp, numDays);
-    console.log('numDays: ', numDays);
     try {
       const contractABI = selectHotelABI(thunkAPI.getState());
+      const userAddress = selectUserAddress(thunkAPI.getState());
       const data = await contractABI.getRangeAvailability(
         timestamp,
         Number(numDays),
       );
-      console.log('data: ', data);
       const obj = {};
-      data.forEach((rawVal, index) => {
-        const num = rawVal.toNumber();
-        if (num > 0) {
-          if (obj[num]) {
-            obj[num].end = _incrementTime(timestamp, index + 1);
+      let consecutiveDayTicker = 0;
+      data.forEach((address, index) => {
+        if (!address.startsWith('0x00')) {
+          if (
+            obj[`${address}-${consecutiveDayTicker}`] &&
+            index === consecutiveDayTicker + 1
+          ) {
+            obj[`${address}-${consecutiveDayTicker}`].end = _incrementTime(
+              timestamp,
+              index + 1,
+            );
+            consecutiveDayTicker++;
           } else {
-            obj[num] = {
-              title: 'Occupied',
+            consecutiveDayTicker = index;
+            obj[`${address}-${index}`] = {
+              title:
+                userAddress.toLowerCase() === address.toLowerCase()
+                  ? 'Your Booking'
+                  : 'Occupied',
               allDay: true,
               start: _incrementTime(timestamp, index),
               end: _incrementTime(timestamp, index),
@@ -47,7 +56,6 @@ export const getRangeAvailability = createAsyncThunk(
           }
         }
       });
-      console.log(obj);
       return {
         events: Object.keys(obj).map((key) => obj[key]),
         prevCallData: { timestamp, numDays },
@@ -64,7 +72,6 @@ export const fetchUserBookings = createAsyncThunk(
   async (userAddress, thunkAPI) => {
     try {
       const contractABI = selectHotelABI(thunkAPI.getState());
-      console.log('contractABI: ', contractABI);
       const data = await contractABI.getAppointmentsByUser(userAddress);
       return data.flatMap((data) => ({
         checkIn: _incrementTime(_calcBN(data[0]), 0),
@@ -106,15 +113,6 @@ export const bookingCalendar = createSlice({
 });
 
 export const { toggleUserBookings } = bookingCalendar.actions;
-// [
-//   {
-//     id: 0,
-//     title: 'Occupied',
-//     allDay: true,
-//     start: new Date(),
-//     end: Number(new Date()) + 86400 * 1000,
-//   },
-// ];
 export const selectMonthlySchedule = (state) => state.calendar.events;
 export const selectUserBookings = (state) => state.calendar.userBookings;
 export const selectPrevCallData = (state) => state.calendar.prevCallData;

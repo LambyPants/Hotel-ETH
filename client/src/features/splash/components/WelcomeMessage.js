@@ -3,13 +3,16 @@ import { Button, Grid, Typography, Fade } from '@mui/material';
 
 import styles from '../Splash.module.css';
 
-export function WelcomeMessage({ showCalendar, handleConnectEthereum }) {
-  console.log('showCalendar: ', showCalendar);
-  //   if (showCalendar) {
-  //     return '';
-  //   }
+export function WelcomeMessage({
+  showCalendar,
+  handleConnectEthereum,
+  handleDemoConnect,
+}) {
+  if (showCalendar) {
+    return '';
+  }
   return (
-    <Fade in={!showCalendar}>
+    <Fade in={!showCalendar} timeout={1000}>
       <Grid
         className={styles.textContainer}
         container
@@ -21,7 +24,7 @@ export function WelcomeMessage({ showCalendar, handleConnectEthereum }) {
           Hotel ETH
         </Typography>
         <Typography variant="h6" className={styles.text}>
-          A (demo) Bed and Breakfast run on Ethereum
+          A (fictional) Bed and Breakfast Run on Ethereum
         </Typography>
         <Button
           variant="contained"
@@ -30,7 +33,7 @@ export function WelcomeMessage({ showCalendar, handleConnectEthereum }) {
         >
           Connect Wallet
         </Button>
-        <Button variant="text" color="secondary">
+        <Button className={styles.scheduleButton} onClick={handleDemoConnect}>
           View Schedule
         </Button>
       </Grid>

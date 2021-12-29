@@ -7,7 +7,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Alert } from '@mui/material';
-import styles from '../BookingCalendar.module.css';
 
 function _renderTable(userBookings) {
   return userBookings.map((data) => (
@@ -28,7 +27,7 @@ export function UserAppointments({ userBookings }) {
   return (
     <TableContainer component={Paper}>
       <Table
-        sx={{ minWidth: 650, maxHeight: '100%' }}
+        sx={{ maxWidth: '100%', maxHeight: '100%' }}
         aria-label="your bookings"
       >
         <TableHead>

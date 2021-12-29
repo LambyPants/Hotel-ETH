@@ -9,7 +9,6 @@ import { connectWallet, setContractABI } from './splashAPI';
 export const fetchUserBalance = createAsyncThunk(
   'splash/fetchUserBalance',
   async (address, thunkAPI) => {
-    console.log('address: ', address);
     try {
       const contractABI = selectHotelABI(thunkAPI.getState());
       const data = (await contractABI.getTokenBalance(address)).toNumber();
@@ -22,9 +21,8 @@ export const fetchUserBalance = createAsyncThunk(
 
 export const connectEthereum = createAsyncThunk(
   'splash/connectEthereum',
-  async (arg, thunkAPI) => {
-    console.log('thunkAPI: ', thunkAPI);
-    const address = await connectWallet();
+  async (isDemoAccount, thunkAPI) => {
+    const address = await connectWallet(isDemoAccount);
     thunkAPI.dispatch(fetchUserBalance(address));
     return address;
   },
@@ -52,12 +50,10 @@ export const splashSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(connectEthereum.fulfilled, (state, action) => {
       const userAddress = action.payload;
-      console.log(action.payload);
       return { ...state, userAddress, showCalendar: true };
     });
     builder.addCase(fetchUserBalance.fulfilled, (state, action) => {
       const userBalance = action.payload;
-      console.log(userBalance);
       return { ...state, userBalance };
     });
   },

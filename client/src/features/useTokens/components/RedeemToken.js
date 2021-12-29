@@ -29,19 +29,16 @@ export function RedeemToken({
   const [endDate, setEndDate] = useState(_stringToDateNum(end));
   const [isValid, setIsValid] = useState(false);
   const [hasCheckedRange, setCheckedRange] = useState(false);
-  console.log({ startDate, endDate });
   const [partyName, setPartyName] = useState('Anonymous');
   useEffect(() => {
     async function _testRedeemTokens(checkTokenRange) {
       const numDays = _calcNumTokens(startDate, endDate);
-      console.log('checkTokenRange: ', checkTokenRange);
       const data = {
         name: 'Anonymous',
         timestamp: startDate / 1000,
         numDays,
       };
       const res = await checkTokenRange(data);
-      console.log('res: ', res);
       if (res) {
         setIsValid(true);
         setMessage(`You will use ${numDays} token(s)`);
@@ -52,8 +49,8 @@ export function RedeemToken({
     }
     // require both start and end to exist
     if (startDate && endDate && !tokenLoading) {
-      if (startDate > endDate) {
-        setMessage('Start date cannot be before end date');
+      if (startDate >= endDate) {
+        setMessage('Start date must be before end date');
         setIsValid(false);
       } else if (startDate < new Date(new Date().toISOString().slice(0, 10))) {
         setMessage('Start date cannot be before today');
@@ -63,7 +60,6 @@ export function RedeemToken({
         setIsValid(false);
       } else if (!hasCheckedRange) {
         setCheckedRange(true);
-        console.log('VALIDATE DATA');
         _testRedeemTokens(checkTokenRange);
       }
     }
@@ -118,7 +114,7 @@ export function RedeemToken({
         <TextField
           type="date"
           error={!isValid && !tokenLoading}
-          helperText="Accomodation start date"
+          helperText="The day you check-in"
           id="date-start"
           defaultValue={placeholderDates.start}
           onChange={(e) => {
@@ -129,7 +125,7 @@ export function RedeemToken({
         <TextField
           type="date"
           error={!isValid && !tokenLoading}
-          helperText="Accomodation end date"
+          helperText="The day you check-out"
           id="date-end"
           defaultValue={placeholderDates.end}
           onChange={(e) => {

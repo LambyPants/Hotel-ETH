@@ -39,7 +39,6 @@ export function UseToken() {
     <Modal
       open={showModal}
       onClose={() => {
-        console.log({ showModal });
         dispatch(toggleModal(!showModal));
       }}
       aria-labelledby="buy or use tokens"
@@ -47,7 +46,9 @@ export function UseToken() {
       elevation={3}
     >
       <div>
-        <Paper className={styles.content}>
+        <Paper
+          className={[styles.content, showSpendTokens ? styles.redeem : '']}
+        >
           {!showSpendTokens ? (
             <BuyToken
               usdPrice={usdPrice}
@@ -68,7 +69,6 @@ export function UseToken() {
               tokenLoading={tokenLoading}
               redeemToken={async (dataObj) => {
                 const { payload } = await dispatch(redeemTokens(dataObj));
-                console.log('res: ', payload);
                 if (payload) {
                   dispatch(toggleModal(!showModal));
                 }
