@@ -21,6 +21,8 @@ contract Hotel {
     BookingToken public bookingToken;
     // used for time conversions
     DateTime private dateTime;
+    // used to return a static price
+    bool private useFixedPricing;
     // the owner can access all functions
     address payable public owner;
     // price of a token in USD
@@ -97,14 +99,17 @@ contract Hotel {
         _;
     }
 
-    constructor(uint64 _initialPrice) {
+    constructor(
+        uint64 _initialPrice,
+        address _priceContractAddr,
+        bool _useFixedPricing
+    ) {
+        useFixedPricing = _useFixedPricing;
         CONTRACT_DEPLOY_TIME = block.timestamp;
         bookingToken = new BookingToken(address(this));
         owner = payable(msg.sender);
         // Rinkeby ETH/USD
-        priceFeed = AggregatorV3Interface(
-            0x8A753747A1Fa494EC906cE90E9f37563A8AF630e
-        );
+        priceFeed = AggregatorV3Interface(_priceContractAddr);
         // DateTime Helper Contract
         dateTime = new DateTime();
         bookingTokenPrice = _initialPrice;
@@ -239,21 +244,25 @@ contract Hotel {
     /// @dev Chainlink returns int256 values which can be negative
     /// @return int256
     function returnPrice() internal view returns (int256) {
-        // try priceFeed.latestRoundData() returns (
-        //     uint80 roundID,
-        //     int256 price,
-        //     uint256 startedAt,
-        //     uint256 timeStamp,
-        //     uint80 answeredInRound
-        // ) {
-        //     console.log(roundID, startedAt, timeStamp, answeredInRound);
-        //     return price;
-        // } catch Error(string memory _err) {
-        //     console.log(_err);
         // not for production; suggest you revert, call propietary fallback oracle, fetch from another 3rd-party oracle, etc.
         // in our case lets just return 100 USD
-        return 100 * 1e8; // ETH won't fall under $100, right? ....right?
-        // }
+        // ETH won't fall under $100, right? ....right?
+        int256 fallbackValue = 100 * 1e8;
+        if (useFixedPricing) {
+            return fallbackValue;
+        }
+        try priceFeed.latestRoundData() returns (
+            uint80,
+            int256 price,
+            uint256,
+            uint256,
+            uint80
+        ) {
+            return price;
+        } catch Error(string memory _err) {
+            console.log(_err);
+            return fallbackValue;
+        }
     }
 
     /// @notice Returns the price of X tokens
@@ -286,7 +295,7 @@ contract Hotel {
         uint256 _etherPrice = getEthPriceForTokens(_numTokens);
         require(msg.value >= _etherPrice, "not enough ether sent in request");
         // transfers ETH to owner account
-        (bool sent, bytes memory data) = owner.call{value: msg.value}("");
+        (bool sent, ) = owner.call{value: msg.value}("");
         require(sent, "Failed to send Ether");
         bookingToken.mint(msg.sender, _numTokens);
         // use bookingTokenPrice for easy human-readable USD value

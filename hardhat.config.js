@@ -1,5 +1,9 @@
 require('@nomiclabs/hardhat-waffle');
-const { ALCHEMY_API_KEY, RINKEBY_PRIVATE_KEY } = require('./keys');
+const {
+  ALCHEMY_API_KEY_KOVAN,
+  ALCHEMY_API_KEY_RINKEBY,
+  DEPLOY_PRIVATE_KEY,
+} = require('./keys');
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -27,8 +31,12 @@ module.exports = {
       chainId: 1337,
     },
     rinkeby: {
-      url: ALCHEMY_API_KEY,
-      accounts: [`${RINKEBY_PRIVATE_KEY}`],
+      url: ALCHEMY_API_KEY_RINKEBY,
+      accounts: [`${DEPLOY_PRIVATE_KEY}`],
+    },
+    kovan: {
+      url: ALCHEMY_API_KEY_KOVAN,
+      accounts: [`${DEPLOY_PRIVATE_KEY}`],
     },
   },
 };
