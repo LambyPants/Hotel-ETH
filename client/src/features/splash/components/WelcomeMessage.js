@@ -34,7 +34,7 @@ export function WelcomeMessage({
           Connect Wallet
         </Button>
         <Button className={styles.scheduleButton} onClick={handleDemoConnect}>
-          View Schedule
+          Connect as Demo User
         </Button>
       </Grid>
     </Fade>

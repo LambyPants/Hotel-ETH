@@ -47,7 +47,10 @@ export function UseToken() {
     >
       <div>
         <Paper
-          className={[styles.content, showSpendTokens ? styles.redeem : '']}
+          className={[
+            styles.content,
+            showSpendTokens ? styles.redeem : '',
+          ].join(' ')}
         >
           {!showSpendTokens ? (
             <BuyToken
@@ -69,6 +72,7 @@ export function UseToken() {
               tokenLoading={tokenLoading}
               redeemToken={async (dataObj) => {
                 const { payload } = await dispatch(redeemTokens(dataObj));
+                console.log('res: ', payload);
                 if (payload) {
                   dispatch(toggleModal(!showModal));
                 }

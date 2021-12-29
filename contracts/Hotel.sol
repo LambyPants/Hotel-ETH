@@ -18,11 +18,11 @@ contract Hotel {
     using SafeMath for uint256;
     using SafeMath for uint64;
     // 1 token = 1 day accomodation
-    BookingToken private bookingToken;
+    BookingToken public bookingToken;
     // used for time conversions
     DateTime private dateTime;
     // the owner can access all functions
-    address public owner;
+    address payable public owner;
     // price of a token in USD
     uint64 public bookingTokenPrice;
     // minimum year someone can schedule an appointment
@@ -100,7 +100,7 @@ contract Hotel {
     constructor(uint64 _initialPrice) {
         CONTRACT_DEPLOY_TIME = block.timestamp;
         bookingToken = new BookingToken(address(this));
-        owner = msg.sender;
+        owner = payable(msg.sender);
         // Rinkeby ETH/USD
         priceFeed = AggregatorV3Interface(
             0x8A753747A1Fa494EC906cE90E9f37563A8AF630e
@@ -221,7 +221,7 @@ contract Hotel {
     /// @notice Allows the current owner role to be passed to a new owner
     /// @dev owner controls pretty much everything so pass with care
     function passOwnerRole(address _owner) public onlyOwner {
-        owner = _owner;
+        owner = payable(_owner);
         emit OwnerChanged(msg.sender, _owner);
     }
 
@@ -285,6 +285,9 @@ contract Hotel {
         require(msg.value > 0, "must send ether in request");
         uint256 _etherPrice = getEthPriceForTokens(_numTokens);
         require(msg.value >= _etherPrice, "not enough ether sent in request");
+        // transfers ETH to owner account
+        (bool sent, bytes memory data) = owner.call{value: msg.value}("");
+        require(sent, "Failed to send Ether");
         bookingToken.mint(msg.sender, _numTokens);
         // use bookingTokenPrice for easy human-readable USD value
         emit TokenBought(msg.sender, _numTokens, bookingTokenPrice);

@@ -1,9 +1,4 @@
-import {
-  createSlice,
-  current,
-  createSelector,
-  createAsyncThunk,
-} from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { ethers } from 'ethers';
 import { selectHotelABI, selectUserAddress } from '../splash/splashSlice';
 // import { connectWallet, setContractABI } from './calendarAPI';

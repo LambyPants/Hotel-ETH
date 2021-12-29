@@ -37,16 +37,10 @@ const showDayAccessible = (date) => {
   if (date < Number(new Date()) - 86400 * 1000)
     return {
       className: 'past-day',
-      style: {
-        cursor: 'not-allowed',
-      },
     };
   else
     return {
       className: 'available-day',
-      style: {
-        cursor: 'pointer',
-      },
     };
 };
 
@@ -63,7 +57,6 @@ function fetchRangeData({ start, end }, dispatch) {
   const normalizedStart = new Date(start.toISOString().slice(0, 10));
   const normalizedEnd = new Date(end.toISOString().slice(0, 10));
   const numDays = (normalizedEnd - normalizedStart) / (86400 * 1000);
-  console.log('numDays: ', numDays, normalizedStart);
   dispatch(
     getRangeAvailability({
       timestamp: normalizedStart / 1000,
@@ -75,7 +68,6 @@ function fetchRangeData({ start, end }, dispatch) {
 export function BookingCalendar() {
   const showCalendar = useSelector(selectShowCalendar);
   const monthlySchedule = useSelector(selectMonthlySchedule);
-  console.log('monthlySchedule: ', monthlySchedule);
   const showUserBookings = useSelector(selectShowUserBookings);
   const userBookings = useSelector(selectUserBookings);
   const userAddress = useSelector(selectUserAddress);

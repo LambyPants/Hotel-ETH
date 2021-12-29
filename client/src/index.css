@@ -39,6 +39,14 @@ div.rbc-toolbar > span:nth-child(3) {
 
 .App .rbc-event {
   background-color: #1b76d2;
+  cursor: default;
+}
+
+.App .available-day {
+  cursor: pointer;
+}
+.App .past-day {
+  cursor: not-allowed;
 }
 
 .App .available-day:hover,

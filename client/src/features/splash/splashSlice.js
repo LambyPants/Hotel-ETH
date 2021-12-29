@@ -1,6 +1,5 @@
 import {
   createSlice,
-  current,
   createSelector,
   createAsyncThunk,
 } from '@reduxjs/toolkit';

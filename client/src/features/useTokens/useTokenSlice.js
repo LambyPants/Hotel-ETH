@@ -5,11 +5,21 @@ import {
   selectHotelABI,
   selectUserAddress,
 } from '../splash/splashSlice';
+import {
+  selectPrevCallData,
+  getRangeAvailability,
+} from '../bookingCalendar/bookingCalendarSlice';
 
 const _refreshUserBalance = (thunkAPI) => {
   // fetch the users balance upon successful purchase of tokens
   const userAddress = selectUserAddress(thunkAPI.getState());
   thunkAPI.dispatch(fetchUserBalance(userAddress));
+};
+
+const _refreshCalendar = (thunkAPI) => {
+  // fetch the users balance upon successful purchase of tokens
+  const prevCallData = selectPrevCallData(thunkAPI.getState());
+  thunkAPI.dispatch(getRangeAvailability(prevCallData));
 };
 
 export const getBookingTokenPrice = createAsyncThunk(
@@ -56,14 +66,8 @@ export const checkTokenRange = createAsyncThunk(
   'token/checkTokenRange',
   async ({ name, timestamp, numDays }, thunkAPI) => {
     try {
-      console.log('firing', timestamp, numDays);
       const contractABI = selectHotelABI(thunkAPI.getState());
-      const tx = await contractABI.callStatic.bookAppointment(
-        name,
-        timestamp,
-        numDays,
-      );
-      console.log({ tx });
+      await contractABI.callStatic.bookAppointment(name, timestamp, numDays);
       return true;
     } catch (err) {
       console.log({ err });
@@ -78,13 +82,12 @@ export const redeemTokens = createAsyncThunk(
     try {
       const contractABI = selectHotelABI(thunkAPI.getState());
       const tx = await contractABI.bookAppointment(name, timestamp, numDays);
-      console.log({ tx });
       const receipt = await tx.wait();
-      console.log('receipt: ', receipt);
       if (receipt.status === 0) {
         throw new Error('Transaction failed');
       }
       _refreshUserBalance(thunkAPI);
+      _refreshCalendar(thunkAPI);
       return true;
     } catch (err) {
       console.log({ err });
@@ -131,7 +134,6 @@ export const useTokenSlice = createSlice({
     toggleSpendTokens(state, action) {
       const { showSpendTokens, placeholderStart, placeholderEnd } =
         action.payload;
-      console.log(placeholderStart, placeholderEnd);
       return {
         ...state,
         showSpendTokens,
