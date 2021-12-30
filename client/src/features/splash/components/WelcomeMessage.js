@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Grid, Typography, Fade } from '@mui/material';
-
+import { GitHub, Email, LinkedIn } from '@mui/icons-material';
 import styles from '../Splash.module.css';
 
 export function WelcomeMessage({
@@ -33,9 +33,32 @@ export function WelcomeMessage({
         >
           Connect Wallet
         </Button>
-        <Button className={styles.scheduleButton} onClick={handleDemoConnect}>
-          Connect as Demo User
-        </Button>
+        <Grid
+          className={styles.links}
+          container
+          justifyContent="space-between"
+          align-items="center"
+        >
+          <a
+            href="https://github.com/LambyPants/Hotel-ETH"
+            aria-label="see the code"
+          >
+            <GitHub fontSize="large" />
+          </a>
+          <a
+            title="contact developer"
+            aria-label="E-mail the developer"
+            href="mailto:appsbylamby@gmail.com"
+          >
+            <Email fontSize="large" />
+          </a>
+          <a
+            href="https://www.linkedin.com/in/ryan-lambert-58202596/"
+            aria-label="developer's LinkedIn"
+          >
+            <LinkedIn fontSize="large" />
+          </a>
+        </Grid>
       </Grid>
     </Fade>
   );

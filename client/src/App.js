@@ -7,9 +7,6 @@ import { UseToken } from './features/useTokens/UseToken';
 import { DappWrapper } from './features/dappWrapper/DappWrapper';
 
 function App() {
-  // if (window.ethereum === undefined) {
-  //   return <NoWalletDetected />;
-  // }
   return (
     <div className="App">
       <DappWrapper>

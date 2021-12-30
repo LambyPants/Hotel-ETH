@@ -50,7 +50,6 @@ export function Splash() {
       <WelcomeMessage
         showCalendar={showCalendar}
         handleConnectEthereum={() => dispatch(connectEthereum())}
-        handleDemoConnect={() => dispatch(connectEthereum(true))}
       />
 
       <div className={styles.warning}>

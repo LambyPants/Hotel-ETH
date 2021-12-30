@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { ethers } from 'ethers';
 import { selectHotelABI, selectUserAddress } from '../splash/splashSlice';
-// import { connectWallet, setContractABI } from './calendarAPI';
 
 function _incrementTime(t, i) {
   return (
@@ -25,20 +24,22 @@ export const getRangeAvailability = createAsyncThunk(
         Number(numDays),
       );
       const obj = {};
-      let consecutiveDayTicker = 0;
+      let eventStartIndex = 0;
+      let eventNumTicker = 0;
       data.forEach((address, index) => {
         if (!address.startsWith('0x00')) {
           if (
-            obj[`${address}-${consecutiveDayTicker}`] &&
-            index === consecutiveDayTicker + 1
+            obj[`${address}-${eventStartIndex}`] &&
+            index === eventStartIndex + eventNumTicker + 1
           ) {
-            obj[`${address}-${consecutiveDayTicker}`].end = _incrementTime(
+            obj[`${address}-${eventStartIndex}`].end = _incrementTime(
               timestamp,
               index + 1,
             );
-            consecutiveDayTicker++;
+            eventNumTicker++;
           } else {
-            consecutiveDayTicker = index;
+            eventStartIndex = index;
+            eventNumTicker = 0;
             obj[`${address}-${index}`] = {
               title:
                 userAddress.toLowerCase() === address.toLowerCase()

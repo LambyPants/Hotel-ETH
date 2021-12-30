@@ -15,7 +15,11 @@ import {
   selectUserBookings,
   fetchUserBookings,
 } from './bookingCalendarSlice';
-import { toggleModal, toggleSpendTokens } from '../useTokens/useTokenSlice';
+import {
+  refundTokens,
+  toggleModal,
+  toggleSpendTokens,
+} from '../useTokens/useTokenSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import styles from './BookingCalendar.module.css';
 import { UserAppointments } from './components/UserAppointments';
@@ -24,6 +28,7 @@ import { TouchCellWrapper } from './components/TouchCellWrapper';
 const localizer = momentLocalizer(moment);
 
 function handleSelect({ start, end }, dispatch) {
+  if (start < Date.now() - 86400 * 1000) return;
   dispatch(
     toggleSpendTokens({
       showSpendTokens: true,
@@ -68,7 +73,6 @@ function fetchRangeData({ start, end }, dispatch) {
 export function BookingCalendar() {
   const showCalendar = useSelector(selectShowCalendar);
   const monthlySchedule = useSelector(selectMonthlySchedule);
-  console.log('monthlySchedule: ', monthlySchedule);
   const showUserBookings = useSelector(selectShowUserBookings);
   const userBookings = useSelector(selectUserBookings);
   const userAddress = useSelector(selectUserAddress);
@@ -128,7 +132,12 @@ export function BookingCalendar() {
     ) : (
       <Fade in={showUserBookings}>
         <div className={styles.table}>
-          <UserAppointments userBookings={userBookings} />
+          <UserAppointments
+            userBookings={userBookings}
+            cancelBooking={(index) => {
+              dispatch(refundTokens(index));
+            }}
+          />
         </div>
       </Fade>
     );

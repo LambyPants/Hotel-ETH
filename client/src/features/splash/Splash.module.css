@@ -14,7 +14,7 @@
 .wrapper > .textContainer > button {
   margin-top: 8px;
 }
-.wrapper > .textContainer > button.scheduleButton {
+.wrapper > .textContainer > .text a {
   color: white;
 }
 
@@ -36,10 +36,21 @@
   margin-right: 8px !important;
 }
 
-.text {
+.text,
+.links a {
   color: white;
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
     1px 1px 0 #000;
+  transition: color 0.3s ease;
+}
+
+.links {
+  max-width: 150px;
+  margin-top: 16px;
+}
+
+.links a:hover {
+  color: #ddd;
 }
 
 .chip {

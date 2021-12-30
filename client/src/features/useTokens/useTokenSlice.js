@@ -8,12 +8,19 @@ import {
 import {
   selectPrevCallData,
   getRangeAvailability,
+  fetchUserBookings,
 } from '../bookingCalendar/bookingCalendarSlice';
 
 const _refreshUserBalance = (thunkAPI) => {
   // fetch the users balance upon successful purchase of tokens
   const userAddress = selectUserAddress(thunkAPI.getState());
   thunkAPI.dispatch(fetchUserBalance(userAddress));
+};
+
+const _refreshUserBookings = (thunkAPI) => {
+  // fetch the users balance upon successful purchase of tokens
+  const userAddress = selectUserAddress(thunkAPI.getState());
+  thunkAPI.dispatch(fetchUserBookings(userAddress));
 };
 
 const _refreshCalendar = (thunkAPI) => {
@@ -27,13 +34,10 @@ export const getBookingTokenPrice = createAsyncThunk(
   async (arg, thunkAPI) => {
     try {
       const contractABI = selectHotelABI(thunkAPI.getState());
-      console.log('contractABI: ', contractABI);
       const usdPrice = (await contractABI.bookingTokenPrice()).toNumber();
-      console.log('usdPrice: ', usdPrice);
       const ethPrice = ethers.utils.formatEther(
         await contractABI.getEthPriceForTokens(1),
       );
-      console.log('ethPrice: ', ethPrice);
       return { usdPrice, ethPrice };
     } catch (err) {
       console.log({ err });
@@ -47,8 +51,9 @@ export const buyNumTokens = createAsyncThunk(
   async (num, thunkAPI) => {
     try {
       const contractABI = selectHotelABI(thunkAPI.getState());
+      const currEthPrice = selectTokenPriceEth(thunkAPI.getState());
       const tx = await contractABI.buyTokens(num, {
-        value: ethers.utils.parseEther('10.0'),
+        value: ethers.utils.parseEther(String(Number(currEthPrice) * num)),
       });
       const receipt = await tx.wait();
       if (receipt.status === 0) {
@@ -111,6 +116,26 @@ export const verifyBooking = createAsyncThunk(
       return true;
     } catch (err) {
       console.log({ err });
+    }
+  },
+);
+
+export const refundTokens = createAsyncThunk(
+  'token/refundTokens',
+  async (deleteIndex, thunkAPI) => {
+    try {
+      const contractABI = selectHotelABI(thunkAPI.getState());
+      const tx = await contractABI.refundAppointment(deleteIndex);
+      const receipt = await tx.wait();
+      if (receipt.status === 0) {
+        throw new Error('Transaction failed');
+      }
+      _refreshUserBalance(thunkAPI);
+      _refreshUserBookings(thunkAPI);
+      return true;
+    } catch (err) {
+      console.log({ err });
+      return false;
     }
   },
 );

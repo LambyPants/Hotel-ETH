@@ -40,7 +40,7 @@ contract Hotel {
     // user appointment info - saved in userBookings array
     struct UserBooking {
         uint256 timestamp;
-        uint256 numDays;
+        uint8 numDays;
     }
     // this contract uses epoch/unix time to determine booking days; keys must be mod 86400
     mapping(uint256 => Appointment) scheduleByTimestamp;
@@ -55,6 +55,12 @@ contract Hotel {
     event TokenBought(address indexed from, uint256 sum, uint64 price);
     // emitted when user schedules an appointment
     event AppointmentScheduled(
+        address indexed from,
+        uint256 timestamp,
+        uint256 sum
+    );
+    // emitted when user refunds an appointment
+    event AppointmentRefunded(
         address indexed from,
         uint256 timestamp,
         uint256 sum
@@ -184,8 +190,8 @@ contract Hotel {
         return monthlyAppointments;
     }
 
-    /// @notice Allows user to schedule an appointment per the year -> month -> day datamodel
-    /// @dev validMonth validName validDay required
+    /// @notice Allows user to schedule an appointment at the hotel
+    /// @dev timestamp must be mod 86400 and _numDays must match total tickets
     function bookAppointment(
         string memory _name,
         uint256 _timestamp,
@@ -196,10 +202,6 @@ contract Hotel {
         validTimestamp(_timestamp)
         validNumDays(_numDays)
     {
-        // the goal is to have at least 24 hours notice before a booking
-        // uint256 _timeDelta = _timestamp.sub(block.timestamp);
-        // require(_timeDelta >= 86400, "booking date too close to todays date");
-        // erc20 token already contains a check to ensure user has enough tokens
         bookingToken.burn(msg.sender, _numDays);
         uint8 i = 0;
 
@@ -217,10 +219,56 @@ contract Hotel {
                 _name,
                 msg.sender
             );
-            // save all user timestamps in array - we can use the timestamp + numDays as keys to our primary Appointment mapping
-            userBookings[msg.sender].push(UserBooking(_timestamp, _numDays));
         }
+        // save all user timestamps in array - we can use the timestamp + numDays as keys to our primary Appointment mapping
+        userBookings[msg.sender].push(UserBooking(_timestamp, _numDays));
+
         emit AppointmentScheduled(msg.sender, _timestamp, _numDays);
+    }
+
+    function removeUserBooking(uint256 _indexToDelete) internal {
+        require(_indexToDelete < userBookings[msg.sender].length);
+        userBookings[msg.sender][_indexToDelete] = userBookings[msg.sender][
+            userBookings[msg.sender].length - 1
+        ];
+        userBookings[msg.sender].pop();
+    }
+
+    /// @notice Allows user to refund any appointment
+    /// @dev for a production app you should cap maxRedemptions for users to avoid cancellation abuse
+    function refundAppointment(uint8 _index) public {
+        // first get the timestamp and numdays from timestamp from the index
+        uint256 timestamp = userBookings[msg.sender][_index].timestamp;
+        uint8 numDays = userBookings[msg.sender][_index].numDays;
+        require(timestamp > 0 && numDays > 0, "no booking found at that index");
+        validateTimestamp(timestamp);
+        // cannot cancel past events
+        require(
+            timestamp > block.timestamp,
+            "cannot cancel events in the past"
+        );
+        uint8 i = 0;
+        for (i; i < numDays; i++) {
+            uint256 currDay = timestamp + (86400 * i);
+            // Solidity reverts state changes when require is violated
+            // this allows us to loop through and create the necessary stateChanges in 1 for loop
+            require(
+                scheduleByTimestamp[currDay].isAppointment == true,
+                "Appointment does not exist"
+            );
+            require(
+                scheduleByTimestamp[currDay].userAddress == msg.sender,
+                "Cannot refund an appointment msg.sender did not create"
+            );
+            // this effectively deletes the event
+            scheduleByTimestamp[currDay].isAppointment = false;
+        }
+        // this removes the booking from the user array
+        removeUserBooking(_index);
+        // refund the user by minting more tokens
+        bookingToken.mint(msg.sender, numDays);
+        // emit an event so UI can update
+        emit AppointmentRefunded(msg.sender, timestamp, numDays);
     }
 
     /// @notice Allows the current owner role to be passed to a new owner
@@ -275,25 +323,27 @@ contract Hotel {
     {
         require(_numTokens > 0, "invalid number of tokens");
         // get the raw int256 price
-        int256 _rawEthToUsdPrice = returnPrice();
+        int256 rawEthToUsdPrice = returnPrice();
         // protect against overflows from the priceFeed since int can be negative
-        require(_rawEthToUsdPrice >= 0, "price for Ether cannot be negative");
+        require(rawEthToUsdPrice >= 0, "price for Ether cannot be negative");
         // convert it to uint so we can compare to msg.value
-        uint256 _ethToUsdPrice = uint256(_rawEthToUsdPrice);
+        uint256 ethToUsdPrice = uint256(rawEthToUsdPrice);
         // USDC needs 8 decimals added
-        uint256 _normalizedPrice = _ethToUsdPrice.div(1e8);
+        uint256 normalizedPrice = ethToUsdPrice.div(1e8);
         // get the price for 1 token
-        uint256 _priceFor1Token = bookingTokenPrice.div(_normalizedPrice);
+        uint256 priceFor1Token = (bookingTokenPrice.mul(1e18)).div(
+            normalizedPrice
+        );
         // and then multiply that price by _numTokens and then by 1e18 which converts eth to wei
-        return (_priceFor1Token.mul(_numTokens)).mul(1e18);
+        return priceFor1Token.mul(_numTokens);
     }
 
     /// @notice Allows user to buy a X tokens
     /// @dev msg.value must be >= the getEthPriceForTokens value
     function buyTokens(uint256 _numTokens) public payable {
         require(msg.value > 0, "must send ether in request");
-        uint256 _etherPrice = getEthPriceForTokens(_numTokens);
-        require(msg.value >= _etherPrice, "not enough ether sent in request");
+        uint256 etherPrice = getEthPriceForTokens(_numTokens);
+        require(msg.value >= etherPrice, "not enough ether sent in request");
         // transfers ETH to owner account
         (bool sent, ) = owner.call{value: msg.value}("");
         require(sent, "Failed to send Ether");

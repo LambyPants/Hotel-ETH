@@ -47,7 +47,6 @@ div.rbc-toolbar > span:nth-child(3) {
 }
 .App .past-day {
   cursor: not-allowed;
-  pointer-events: none;
 }
 
 .App .available-day:hover,

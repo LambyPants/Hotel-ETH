@@ -20,8 +20,8 @@ export const fetchUserBalance = createAsyncThunk(
 
 export const connectEthereum = createAsyncThunk(
   'splash/connectEthereum',
-  async (isDemoAccount, thunkAPI) => {
-    const address = await connectWallet(isDemoAccount);
+  async (data, thunkAPI) => {
+    const address = await connectWallet();
     thunkAPI.dispatch(fetchUserBalance(address));
     return address;
   },

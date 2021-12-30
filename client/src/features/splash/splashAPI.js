@@ -16,12 +16,10 @@ function _findNetwork() {
   }
 }
 
-export async function connectWallet(isDemoAccount) {
-  const [address] = isDemoAccount
-    ? ['0x0000000000000000000000000000000000000000']
-    : await window.ethereum.request({
-        method: 'eth_requestAccounts',
-      });
+export async function connectWallet() {
+  const [address] = await window.ethereum.request({
+    method: 'eth_requestAccounts',
+  });
   return address;
 }
 

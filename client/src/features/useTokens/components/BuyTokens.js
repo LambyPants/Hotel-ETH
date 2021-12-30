@@ -40,7 +40,10 @@ export function BuyToken({ ethPrice, usdPrice, closeModal, buyToken }) {
               Price in USD ${isError ? usdPrice : usdPrice * currVal}
             </Typography>
             <Typography id="modal-modal-title" variant="subtitle1">
-              Price in ETH {isError ? ethPrice : ethPrice * currVal}
+              Price in ETH{' '}
+              {isError
+                ? Number(ethPrice).toFixed(4)
+                : Number(ethPrice * currVal).toFixed(4)}
             </Typography>
           </Grid>
         </Grid>

@@ -1,4 +1,4 @@
-import React, { cloneElement, Children } from 'react';
+import { cloneElement, Children } from 'react';
 
 // react-big-calendar doesn't handle mobile select events
 // see https://github.com/jquense/react-big-calendar/issues/1434

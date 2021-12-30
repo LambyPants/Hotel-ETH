@@ -38,11 +38,8 @@
 }
 
 @media (max-width: 576px) {
-  /* .content {
-    max-height: 400px;
-  } */
   .content.redeem {
-    max-height: unset;
+    max-height: 440px;
   }
   .innerContent h4 {
     font-size: 1rem;
