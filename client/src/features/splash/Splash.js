@@ -7,13 +7,16 @@ import {
   connectEthereum,
   selectUserAddress,
   hasEthereum,
+  setValidNetwork,
   selectUserBalance,
+  selectValidChain,
 } from './splashSlice';
 
 import styles from './Splash.module.css';
 import { WalletChip } from './components/WalletChip';
 import { WelcomeMessage } from './components/WelcomeMessage';
 import { NoEthereumError } from './components/NoEthereumError';
+import { InvalidNetworkError } from './components/InvalidNetworkError';
 
 export function Splash() {
   const [open, setOpen] = useState(true);
@@ -21,10 +24,12 @@ export function Splash() {
   const userAddress = useSelector(selectUserAddress);
   const ethExists = useSelector(hasEthereum);
   const userBalance = useSelector(selectUserBalance);
+  const validNetwork = useSelector(selectValidChain);
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (ethExists) {
+      dispatch(setValidNetwork());
       window.ethereum.on('accountsChanged', ([newAddress]) => {
         if (newAddress === undefined) {
           dispatch(resetState());
@@ -48,6 +53,7 @@ export function Splash() {
         handleDelete={() => dispatch(resetState())}
       />
       <WelcomeMessage
+        disableButtons={!validNetwork}
         showCalendar={showCalendar}
         handleConnectEthereum={() => dispatch(connectEthereum())}
       />
@@ -59,6 +65,7 @@ export function Splash() {
             open={open}
             setOpen={setOpen}
           />
+          <InvalidNetworkError validNetwork={!ethExists || validNetwork} />
         </div>
       </div>
     </div>

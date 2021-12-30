@@ -34,7 +34,9 @@ export function DappWrapper(props) {
     }
 
     return function cleanup() {
-      contractABI.removeAllListeners();
+      if (contractABI) {
+        contractABI.removeAllListeners();
+      }
     };
   }, [contractABI]);
   return <div>{props.children}</div>;

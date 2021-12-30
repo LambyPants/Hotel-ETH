@@ -72,7 +72,6 @@ export function UseToken() {
               tokenLoading={tokenLoading}
               redeemToken={async (dataObj) => {
                 const { payload } = await dispatch(redeemTokens(dataObj));
-                console.log('res: ', payload);
                 if (payload) {
                   dispatch(toggleModal(!showModal));
                 }

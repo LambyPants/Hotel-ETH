@@ -6,7 +6,7 @@ import styles from '../Splash.module.css';
 export function WelcomeMessage({
   showCalendar,
   handleConnectEthereum,
-  handleDemoConnect,
+  disableButtons,
 }) {
   if (showCalendar) {
     return '';
@@ -27,6 +27,7 @@ export function WelcomeMessage({
           A (fictional) Bed and Breakfast Run on Ethereum
         </Typography>
         <Button
+          disabled={disableButtons}
           variant="contained"
           color="secondary"
           onClick={handleConnectEthereum}

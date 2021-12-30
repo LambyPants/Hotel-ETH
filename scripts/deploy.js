@@ -33,17 +33,17 @@ async function main() {
     USE_FIXED_PRICING,
   });
   const Hotel = await ethers.getContractFactory('Hotel');
-  const hotel = await Hotel.deploy(
-    INITIAL_ROOM_PRICE,
-    PRICING_CONTRACT_ADDRESS,
-    USE_FIXED_PRICING,
-  );
-  await hotel.deployed();
+  // const hotel = await Hotel.deploy(
+  //   INITIAL_ROOM_PRICE,
+  //   PRICING_CONTRACT_ADDRESS,
+  //   USE_FIXED_PRICING,
+  // );
+  // await hotel.deployed();
 
-  console.log('Hotel address:', hotel.address);
+  // console.log('Hotel address:', hotel.address);
 
-  // We also save the contract's artifacts and address in the client directory
-  saveFrontendFiles(hotel);
+  // // We also save the contract's artifacts and address in the client directory
+  // saveFrontendFiles(hotel);
 }
 
 function saveFrontendFiles(hotel) {

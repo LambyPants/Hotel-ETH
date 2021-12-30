@@ -5,6 +5,8 @@ import {
 } from '@reduxjs/toolkit';
 import { connectWallet, setContractABI } from './splashAPI';
 
+const VALID_CHAINS = [4, 42, 1337];
+
 export const fetchUserBalance = createAsyncThunk(
   'splash/fetchUserBalance',
   async (address, thunkAPI) => {
@@ -20,19 +22,26 @@ export const fetchUserBalance = createAsyncThunk(
 
 export const connectEthereum = createAsyncThunk(
   'splash/connectEthereum',
-  async (data, thunkAPI) => {
+  async () => {
     const address = await connectWallet();
-    thunkAPI.dispatch(fetchUserBalance(address));
     return address;
+  },
+);
+
+export const setValidNetwork = createAsyncThunk(
+  'splash/setValidNetwork',
+  async () => {
+    await connectWallet();
+    return VALID_CHAINS.includes(Number(window.ethereum.chainId));
   },
 );
 
 const initialState = {
   showCalendar: false,
   userAddress: '',
-  hotelAPI: {},
   provider: null,
   userBalance: 0,
+  validChain: false,
 };
 export const splashSlice = createSlice({
   name: 'splash',
@@ -42,14 +51,21 @@ export const splashSlice = createSlice({
       const showCalendar = action.payload;
       return { ...state, showCalendar };
     },
-    resetState() {
-      return initialState;
+    resetState(state) {
+      return { ...initialState, validChain: state.validChain };
     },
   },
   extraReducers: (builder) => {
     builder.addCase(connectEthereum.fulfilled, (state, action) => {
       const userAddress = action.payload;
       return { ...state, userAddress, showCalendar: true };
+    });
+    builder.addCase(setValidNetwork.fulfilled, (state, action) => {
+      const validChain = action.payload;
+      return {
+        ...state,
+        validChain,
+      };
     });
     builder.addCase(fetchUserBalance.fulfilled, (state, action) => {
       const userBalance = action.payload;
@@ -62,10 +78,12 @@ export const { toggleCalendar, resetState } = splashSlice.actions;
 
 export const hasEthereum = () => window.ethereum;
 export const selectShowCalendar = (state) => state.splash.showCalendar;
+export const selectValidChain = (state) => state.splash.validChain;
 export const selectUserAddress = (state) => state.splash.userAddress;
 export const selectUserBalance = (state) => state.splash.userBalance || 0;
-export const selectContractAndProvider = createSelector([hasEthereum], (eth) =>
-  eth ? setContractABI() : {},
+export const selectContractAndProvider = createSelector(
+  [selectValidChain],
+  (eth) => (eth ? setContractABI() : { contract: null, provider: null }),
 );
 export const selectHotelABI = createSelector(
   [selectContractAndProvider],

@@ -4,12 +4,11 @@ import localAddress from '../../contracts/localhost-address.json';
 import rinkebyAddress from '../../contracts/rinkeby-address.json';
 import kovanAddress from '../../contracts/kovan-address.json';
 
-function _findNetwork() {
-  const chainId = Number(window.ethereum.chainId);
+export function findNetwork(chainId) {
   switch (chainId) {
-    case chainId === 4:
+    case 4:
       return rinkebyAddress;
-    case chainId === 42:
+    case 42:
       return kovanAddress;
     default:
       return localAddress;
@@ -25,10 +24,9 @@ export async function connectWallet() {
 
 export function setContractABI() {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
-
   return {
     contract: new ethers.Contract(
-      _findNetwork()['Hotel'],
+      findNetwork(Number(window.ethereum.chainId))['Hotel'],
       HotelArtifact.abi,
       provider.getSigner(0),
     ),
