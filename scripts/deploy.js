@@ -5,8 +5,8 @@ const PRICING_CONTRACT_ADDRESS =
     : '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e'; // rinkeby USD/ETH
 
 // this demo was only meant for use on rinkeby and kovan
-const USE_FIXED_PRICING = Boolean(
-  !network.name.includes('kovan') || !network.name.includes('rinkeby'),
+const USE_FIXED_PRICING = !(
+  network.name.includes('kovan') || network.name.includes('rinkeby')
 );
 
 async function main() {
@@ -33,17 +33,17 @@ async function main() {
     USE_FIXED_PRICING,
   });
   const Hotel = await ethers.getContractFactory('Hotel');
-  // const hotel = await Hotel.deploy(
-  //   INITIAL_ROOM_PRICE,
-  //   PRICING_CONTRACT_ADDRESS,
-  //   USE_FIXED_PRICING,
-  // );
-  // await hotel.deployed();
+  const hotel = await Hotel.deploy(
+    INITIAL_ROOM_PRICE,
+    PRICING_CONTRACT_ADDRESS,
+    USE_FIXED_PRICING,
+  );
+  await hotel.deployed();
 
-  // console.log('Hotel address:', hotel.address);
+  console.log('Hotel address:', hotel.address);
 
-  // // We also save the contract's artifacts and address in the client directory
-  // saveFrontendFiles(hotel);
+  // We also save the contract's artifacts and address in the client directory
+  saveFrontendFiles(hotel);
 }
 
 function saveFrontendFiles(hotel) {

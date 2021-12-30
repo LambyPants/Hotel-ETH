@@ -11,6 +11,10 @@ import {
   fetchUserBookings,
 } from '../bookingCalendar/bookingCalendarSlice';
 
+// to allow metamask to handle insufficient funds
+// 1500000 was the old ethers.js default
+const GAS_LIMIT = 1500000;
+
 const _refreshUserBalance = (thunkAPI) => {
   // fetch the users balance upon successful purchase of tokens
   const userAddress = selectUserAddress(thunkAPI.getState());
@@ -52,8 +56,10 @@ export const buyNumTokens = createAsyncThunk(
     try {
       const contractABI = selectHotelABI(thunkAPI.getState());
       const currEthPrice = selectTokenPriceEth(thunkAPI.getState());
+      console.log();
       const tx = await contractABI.buyTokens(num, {
         value: ethers.utils.parseEther(String(Number(currEthPrice) * num)),
+        gasLimit: GAS_LIMIT,
       });
       const receipt = await tx.wait();
       if (receipt.status === 0) {
@@ -86,7 +92,9 @@ export const redeemTokens = createAsyncThunk(
   async ({ name, timestamp, numDays }, thunkAPI) => {
     try {
       const contractABI = selectHotelABI(thunkAPI.getState());
-      const tx = await contractABI.bookAppointment(name, timestamp, numDays);
+      const tx = await contractABI.bookAppointment(name, timestamp, numDays, {
+        gasLimit: GAS_LIMIT,
+      });
       const receipt = await tx.wait();
       if (receipt.status === 0) {
         throw new Error('Transaction failed');
@@ -125,7 +133,9 @@ export const refundTokens = createAsyncThunk(
   async (deleteIndex, thunkAPI) => {
     try {
       const contractABI = selectHotelABI(thunkAPI.getState());
-      const tx = await contractABI.refundAppointment(deleteIndex);
+      const tx = await contractABI.refundAppointment(deleteIndex, {
+        gasLimit: GAS_LIMIT,
+      });
       const receipt = await tx.wait();
       if (receipt.status === 0) {
         throw new Error('Transaction failed');

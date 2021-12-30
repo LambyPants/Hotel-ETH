@@ -1,13 +1,15 @@
 import React from 'react';
-import { Alert } from '@mui/material';
+import { Alert, Fade } from '@mui/material';
 
 export function InvalidNetworkError({ validNetwork }) {
   if (validNetwork) {
     return '';
   }
   return (
-    <Alert severity="error" sx={{ mb: 2 }}>
-      Error - please connect to Rinkeby, Kovan, or localhost ChainID 1337
-    </Alert>
+    <Fade in={!validNetwork} timeout={1000}>
+      <Alert severity="error" sx={{ mb: 2 }}>
+        Error - please connect to Rinkeby, Kovan, or localhost ChainID 1337
+      </Alert>
+    </Fade>
   );
 }
