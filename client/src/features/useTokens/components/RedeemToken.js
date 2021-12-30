@@ -91,7 +91,7 @@ export function RedeemToken({
           className={styles.alert}
         >
           <Alert severity={!isValid && !tokenLoading ? 'error' : 'info'}>
-            {alertMessage ? alertMessage : 'Checking availability...'}
+            {alertMessage ? alertMessage : 'Loading...'}
           </Alert>
         </Grid>
       </Box>

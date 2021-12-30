@@ -2,7 +2,13 @@ import React, { useState } from 'react';
 import { Grid, Box, Typography, TextField, Button, Alert } from '@mui/material';
 import styles from '../UseTokens.module.css';
 
-export function BuyToken({ ethPrice, usdPrice, closeModal, buyToken }) {
+export function BuyToken({
+  ethPrice,
+  usdPrice,
+  closeModal,
+  buyToken,
+  tokenLoading,
+}) {
   const [isError, setError] = useState(false);
   const [currVal, setVal] = useState(1);
   const [userTyped, setUserTyped] = useState(false);
@@ -27,8 +33,9 @@ export function BuyToken({ ethPrice, usdPrice, closeModal, buyToken }) {
           className={styles.alert}
         >
           <Alert severity="info">
-            Buying in advance allows you to share / gift tokens to others and
-            secures the current price.
+            {userTyped && tokenLoading
+              ? 'Processing Transaction...'
+              : 'Buying in advance allows you to share / gift tokens to others and secures the current price.'}
           </Alert>
           <Grid
             className={styles.prices}
@@ -73,7 +80,7 @@ export function BuyToken({ ethPrice, usdPrice, closeModal, buyToken }) {
         <Button
           variant="contained"
           color="secondary"
-          disabled={!userTyped || isError}
+          disabled={!userTyped || isError || tokenLoading}
           onClick={() => {
             buyToken(currVal);
           }}

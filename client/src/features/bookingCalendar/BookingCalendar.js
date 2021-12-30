@@ -17,6 +17,7 @@ import {
 } from './bookingCalendarSlice';
 import {
   refundTokens,
+  selectTokenLoading,
   toggleModal,
   toggleSpendTokens,
 } from '../useTokens/useTokenSlice';
@@ -76,6 +77,7 @@ export function BookingCalendar() {
   const showUserBookings = useSelector(selectShowUserBookings);
   const userBookings = useSelector(selectUserBookings);
   const userAddress = useSelector(selectUserAddress);
+  const tokenLoading = useSelector(selectTokenLoading);
   const dispatch = useDispatch();
   useLayoutEffect(() => {
     if (showCalendar) {
@@ -134,6 +136,7 @@ export function BookingCalendar() {
         <div className={styles.table}>
           <UserAppointments
             userBookings={userBookings}
+            tokenLoading={tokenLoading}
             cancelBooking={(index) => {
               dispatch(refundTokens(index));
             }}
@@ -141,7 +144,7 @@ export function BookingCalendar() {
         </div>
       </Fade>
     );
-  }, [dispatch, monthlySchedule, showUserBookings, userBookings]);
+  }, [dispatch, monthlySchedule, showUserBookings, userBookings, tokenLoading]);
 
   return (
     <Slide direction="up" in={showCalendar} unmountOnExit>

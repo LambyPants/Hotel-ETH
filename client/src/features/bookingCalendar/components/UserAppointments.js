@@ -1,4 +1,6 @@
 import React from 'react';
+import { useDebounce } from '@react-hook/debounce';
+
 import {
   Button,
   Table,
@@ -11,7 +13,7 @@ import {
   Alert,
 } from '@mui/material';
 
-function _renderTable(userBookings, cancelBooking) {
+function _renderTable(userBookings, cancelBooking, tokenLoading) {
   return userBookings.map((data, index) => (
     <TableRow
       key={data.checkIn}
@@ -26,7 +28,7 @@ function _renderTable(userBookings, cancelBooking) {
         <Button
           color="secondary"
           aria-label="cancel booking and receive back tokens"
-          disabled={Boolean(data.checkIn < Date.now())}
+          disabled={Boolean(data.checkIn < Date.now() || tokenLoading)}
           onClick={() => {
             cancelBooking(index);
           }}
@@ -38,7 +40,13 @@ function _renderTable(userBookings, cancelBooking) {
   ));
 }
 
-export function UserAppointments({ userBookings, cancelBooking }) {
+export function UserAppointments({
+  userBookings,
+  cancelBooking,
+  tokenLoading,
+}) {
+  const [showError, setShowError] = useDebounce(false, 500);
+  setShowError(!userBookings.length);
   return (
     <TableContainer component={Paper}>
       <Table
@@ -53,10 +61,17 @@ export function UserAppointments({ userBookings, cancelBooking }) {
             <TableCell align="right">Manage</TableCell>
           </TableRow>
         </TableHead>
-        <TableBody>{_renderTable(userBookings, cancelBooking)}</TableBody>
+        <TableBody>
+          {_renderTable(userBookings, cancelBooking, tokenLoading)}
+        </TableBody>
       </Table>
-      {!userBookings.length ? (
+      {showError ? (
         <Alert severity="error">You do not have any bookings yet.</Alert>
+      ) : (
+        ''
+      )}
+      {tokenLoading && !showError ? (
+        <Alert severity="info">Processing transaction...</Alert>
       ) : (
         ''
       )}

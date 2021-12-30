@@ -184,13 +184,25 @@ export const useTokenSlice = createSlice({
       return { ...state, tokenPrice };
     });
     builder.addMatcher(
-      isAnyOf(checkTokenRange.pending, getBookingTokenPrice.pending),
+      isAnyOf(
+        checkTokenRange.pending,
+        getBookingTokenPrice.pending,
+        buyNumTokens.pending,
+        redeemTokens.pending,
+        refundTokens.pending,
+      ),
       (state) => {
         return { ...state, tokenLoading: true };
       },
     );
     builder.addMatcher(
-      isAnyOf(checkTokenRange.fulfilled, getBookingTokenPrice.fulfilled),
+      isAnyOf(
+        checkTokenRange.fulfilled,
+        getBookingTokenPrice.fulfilled,
+        buyNumTokens.fulfilled,
+        redeemTokens.fulfilled,
+        refundTokens.fulfilled,
+      ),
       (state) => {
         return { ...state, tokenLoading: false };
       },
