@@ -32,6 +32,9 @@ export function Splash() {
         }
         dispatch(connectEthereum());
       });
+      window.ethereum.on('chainChanged', () => {
+        window.location.reload();
+      });
     } else {
       setOpen(true);
     }

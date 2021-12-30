@@ -245,9 +245,9 @@ contract Hotel {
     /// @return int256
     function returnPrice() internal view returns (int256) {
         // not for production; suggest you revert, call propietary fallback oracle, fetch from another 3rd-party oracle, etc.
-        // in our case lets just return 100 USD
-        // ETH won't fall under $100, right? ....right?
-        int256 fallbackValue = 100 * 1e8;
+        // in our case lets just return 1 eth === 1000 USD
+        // ETH won't fall under $1000, right? ....right?
+        int256 fallbackValue = 1000 * 1e8;
         if (useFixedPricing) {
             return fallbackValue;
         }

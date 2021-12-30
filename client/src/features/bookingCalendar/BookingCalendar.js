@@ -68,6 +68,7 @@ function fetchRangeData({ start, end }, dispatch) {
 export function BookingCalendar() {
   const showCalendar = useSelector(selectShowCalendar);
   const monthlySchedule = useSelector(selectMonthlySchedule);
+  console.log('monthlySchedule: ', monthlySchedule);
   const showUserBookings = useSelector(selectShowUserBookings);
   const userBookings = useSelector(selectUserBookings);
   const userAddress = useSelector(selectUserAddress);

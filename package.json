@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "prepare": "npx hardhat run scripts/populate.js",
     "deploy:local": "npx hardhat compile && npx hardhat run scripts/deploy.js --network localhost",
     "deploy:rinkeby": "npx hardhat compile && npx hardhat run scripts/deploy.js --network rinkeby",
     "deploy:kovan": "npx hardhat compile && npx hardhat run scripts/deploy.js --network kovan",

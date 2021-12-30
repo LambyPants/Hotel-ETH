@@ -7,7 +7,7 @@ import styles from '../Splash.module.css';
 export function WalletChip({ userAddress, userBalance, handleDelete }) {
   if (!userAddress) return '';
   return (
-    <Fade in={userAddress}>
+    <Fade in={Boolean(userAddress)}>
       <div className={styles.chip}>
         <Chip
           color="secondary"

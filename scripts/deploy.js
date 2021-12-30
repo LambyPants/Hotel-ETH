@@ -55,7 +55,7 @@ function saveFrontendFiles(hotel) {
   }
 
   fs.writeFileSync(
-    contractsDir + '/contract-address.json',
+    contractsDir + `/${network.name}-address.json`,
     JSON.stringify({ Hotel: hotel.address }, undefined, 2),
   );
   const HotelArtifact = artifacts.readArtifactSync('Hotel');

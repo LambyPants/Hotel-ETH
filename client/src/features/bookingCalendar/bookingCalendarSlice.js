@@ -57,7 +57,10 @@ export const getRangeAvailability = createAsyncThunk(
       };
     } catch (err) {
       console.log({ err });
-      return [];
+      return {
+        events: [],
+        prevCallData: { timestamp, numDays },
+      };
     }
   },
 );

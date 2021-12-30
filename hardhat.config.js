@@ -17,6 +17,9 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
 
 const developmentChains = ['hardhat', 'localhost'];
 
+// rinkeby	chainid 4
+// kovan chainid 42
+
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
 
