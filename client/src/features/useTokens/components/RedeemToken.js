@@ -63,7 +63,10 @@ export function RedeemToken({
     }
     // require both start and end to exist
     if (startDate && endDate && !overlapLoading) {
-      if (startDate >= endDate) {
+      if (!startDate || !endDate) {
+        setMessage('Please provide a start and end date');
+        setIsValid(false);
+      } else if (startDate >= endDate) {
         setMessage('Start date must be before end date');
         setIsValid(false);
       } else if (startDate < new Date(new Date().toISOString().slice(0, 10))) {
