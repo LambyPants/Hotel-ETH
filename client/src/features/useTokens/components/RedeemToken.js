@@ -15,6 +15,16 @@ function _stringToDateNum(s) {
   return Number(new Date(s));
 }
 
+function _renderAlertMessage(alertMessage, tokenLoading, overlapLoading) {
+  if (overlapLoading) {
+    return 'Checking dates for overlaps...';
+  }
+  if (tokenLoading) {
+    return 'Processing your transaction - track its progress on MetaMask';
+  }
+  return alertMessage;
+}
+
 export function RedeemToken({
   userBalance,
   closeModal,
@@ -22,6 +32,7 @@ export function RedeemToken({
   checkTokenRange,
   tokenLoading,
   placeholderDates,
+  overlapLoading,
 }) {
   const { start, end } = placeholderDates;
   const [alertMessage, setMessage] = useState('');
@@ -30,6 +41,9 @@ export function RedeemToken({
   const [isValid, setIsValid] = useState(false);
   const [hasCheckedRange, setCheckedRange] = useState(false);
   const [partyName, setPartyName] = useState('Anonymous');
+  // only allow redemption when we have a start + end date with valid inputs and nothing is loading
+  const enableButton =
+    startDate && endDate && isValid && !tokenLoading && !overlapLoading;
   useEffect(() => {
     async function _testRedeemTokens(checkTokenRange) {
       const numDays = _calcNumTokens(startDate, endDate);
@@ -48,7 +62,7 @@ export function RedeemToken({
       }
     }
     // require both start and end to exist
-    if (startDate && endDate && !tokenLoading) {
+    if (startDate && endDate && !overlapLoading) {
       if (startDate >= endDate) {
         setMessage('Start date must be before end date');
         setIsValid(false);
@@ -67,7 +81,7 @@ export function RedeemToken({
     startDate,
     endDate,
     userBalance,
-    tokenLoading,
+    overlapLoading,
     checkTokenRange,
     hasCheckedRange,
   ]);
@@ -90,8 +104,8 @@ export function RedeemToken({
           alignItems="center"
           className={styles.alert}
         >
-          <Alert severity={!isValid && !tokenLoading ? 'error' : 'info'}>
-            {alertMessage ? alertMessage : 'Loading...'}
+          <Alert severity={!isValid && !overlapLoading ? 'error' : 'info'}>
+            {_renderAlertMessage(alertMessage, tokenLoading, overlapLoading)}
           </Alert>
         </Grid>
       </Box>
@@ -113,7 +127,7 @@ export function RedeemToken({
       >
         <TextField
           type="date"
-          error={!isValid && !tokenLoading}
+          error={!isValid && !overlapLoading}
           helperText="The day you check-in"
           id="date-start"
           defaultValue={placeholderDates.start}
@@ -124,7 +138,7 @@ export function RedeemToken({
         ></TextField>
         <TextField
           type="date"
-          error={!isValid && !tokenLoading}
+          error={!isValid && !overlapLoading}
           helperText="The day you check-out"
           id="date-end"
           defaultValue={placeholderDates.end}
@@ -138,7 +152,7 @@ export function RedeemToken({
         <Button
           variant="contained"
           color="secondary"
-          disabled={!startDate || !endDate || !isValid || tokenLoading}
+          disabled={!enableButton}
           onClick={() => {
             const data = {
               name: partyName || 'Anonymous',

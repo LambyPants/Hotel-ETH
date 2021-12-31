@@ -71,7 +71,9 @@ export function UserAppointments({
         ''
       )}
       {tokenLoading && !showError ? (
-        <Alert severity="info">Processing transaction...</Alert>
+        <Alert severity="info">
+          Processing your transaction - track its progress on MetaMask
+        </Alert>
       ) : (
         ''
       )}

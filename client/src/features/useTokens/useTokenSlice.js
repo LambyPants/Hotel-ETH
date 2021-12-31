@@ -154,6 +154,7 @@ const initialState = {
   showModal: false,
   showSpendTokens: false,
   tokenLoading: false,
+  overlapCheckLoading: false,
   tokenPrice: { usdPrice: 0, ethPrice: 0 },
   placeholderStart: '',
   placeholderEnd: '',
@@ -179,26 +180,25 @@ export const useTokenSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(checkTokenRange.pending, (state) => {
+      return { ...state, overlapCheckLoading: true };
+    });
+    builder.addCase(checkTokenRange.fulfilled, (state) => {
+      return { ...state, overlapCheckLoading: false };
+    });
     builder.addCase(getBookingTokenPrice.fulfilled, (state, action) => {
       const tokenPrice = action.payload;
       return { ...state, tokenPrice };
     });
+
     builder.addMatcher(
-      isAnyOf(
-        checkTokenRange.pending,
-        getBookingTokenPrice.pending,
-        buyNumTokens.pending,
-        redeemTokens.pending,
-        refundTokens.pending,
-      ),
+      isAnyOf(buyNumTokens.pending, redeemTokens.pending, refundTokens.pending),
       (state) => {
         return { ...state, tokenLoading: true };
       },
     );
     builder.addMatcher(
       isAnyOf(
-        checkTokenRange.fulfilled,
-        getBookingTokenPrice.fulfilled,
         buyNumTokens.fulfilled,
         redeemTokens.fulfilled,
         refundTokens.fulfilled,
@@ -221,5 +221,7 @@ export const selectPlaceholderDates = (state) => ({
 export const selectTokenPriceUSD = (state) => state.token.tokenPrice.usdPrice;
 export const selectTokenPriceEth = (state) => state.token.tokenPrice.ethPrice;
 export const selectTokenLoading = (state) => state.token.tokenLoading;
+export const selectOverlapCheckLoading = (state) =>
+  state.token.overlapCheckLoading;
 
 export default useTokenSlice.reducer;

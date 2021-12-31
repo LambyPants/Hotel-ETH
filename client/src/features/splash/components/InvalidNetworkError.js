@@ -8,7 +8,8 @@ export function InvalidNetworkError({ validNetwork }) {
   return (
     <Fade in={!validNetwork} timeout={1000}>
       <Alert severity="error" sx={{ mb: 2 }}>
-        Error - please connect to Rinkeby, Kovan, or localhost ChainID 1337
+        Unsupported Network - Please connect to Rinkeby, Kovan, or localhost
+        ChainID 1337
       </Alert>
     </Fade>
   );

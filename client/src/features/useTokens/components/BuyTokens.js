@@ -34,7 +34,7 @@ export function BuyToken({
         >
           <Alert severity="info">
             {userTyped && tokenLoading
-              ? 'Processing Transaction...'
+              ? 'Processing your transaction - track its progress on MetaMask'
               : 'Buying in advance allows you to share / gift tokens to others and secures the current price.'}
           </Alert>
           <Grid

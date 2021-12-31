@@ -14,6 +14,7 @@ import {
   redeemTokens,
   checkTokenRange,
   selectTokenLoading,
+  selectOverlapCheckLoading,
 } from './useTokenSlice';
 import { selectUserBalance } from '../splash/splashSlice';
 import { BuyToken } from './components/BuyTokens';
@@ -29,6 +30,7 @@ export function UseToken() {
   const showSpendTokens = useSelector(selectShowSpendTokens);
   const placeholderDates = useSelector(selectPlaceholderDates);
   const tokenLoading = useSelector(selectTokenLoading);
+  const overlapLoading = useSelector(selectOverlapCheckLoading);
 
   useEffect(() => {
     if (showModal && !showSpendTokens) {
@@ -70,6 +72,7 @@ export function UseToken() {
               userBalance={userBalance}
               placeholderDates={placeholderDates}
               tokenLoading={tokenLoading}
+              overlapLoading={overlapLoading}
               redeemToken={async (dataObj) => {
                 const { payload } = await dispatch(redeemTokens(dataObj));
                 if (payload) {

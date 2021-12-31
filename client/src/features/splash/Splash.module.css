@@ -20,11 +20,12 @@
 
 .warning {
   position: absolute;
-  bottom: 6em;
+  bottom: 10%;
   margin-left: auto;
   margin-right: auto;
   left: 0;
   right: 0;
+  max-width: 90%;
   text-align: center;
 }
 .warning > div {
