@@ -1,7 +1,7 @@
 <div id="top"></div>
 <br />
 <div align="center">
-![Demo](http://g.recordit.co/Aa12Arj02f.gif)
+<img src="http://g.recordit.co/Aa12Arj02f.gif" alt="demo"/>
 
   <h3 align="center">Hotel ETH</h3>
 
@@ -56,16 +56,12 @@ Key features include:
 
 This project is meant for educational purposes only, but in theory you could extend the functionality to run a real (or virtual) business with the underlying infrastructure.
 
-<p align="right">(<a href="#top">back to top</a>)</p>
-
 ### Built With
 
 - [Solidity](https://docs.soliditylang.org/en/v0.8.11/)
 - [Hardhat](https://hardhat.org/getting-started/)
 - [React.js](https://reactjs.org/)
 - [Redux (slices)](https://redux-toolkit.js.org/api/createslice)
-
-<p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Getting Started
 
@@ -93,8 +89,6 @@ _For Developers_
    ```sh
    npm run dev
    ```
-
-<p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- LICENSE -->
 
