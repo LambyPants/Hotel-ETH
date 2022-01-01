@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { useDebounce } from '@react-hook/debounce';
 import { useSelector, useDispatch } from 'react-redux';
 
 import {
@@ -19,7 +20,7 @@ import { NoEthereumError } from './components/NoEthereumError';
 import { InvalidNetworkError } from './components/InvalidNetworkError';
 
 export function Splash() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useDebounce(false, 500, true);
   const showCalendar = useSelector(selectShowCalendar);
   const userAddress = useSelector(selectUserAddress);
   const ethExists = useSelector(hasEthereum);
@@ -43,7 +44,7 @@ export function Splash() {
     } else {
       setOpen(true);
     }
-  }, [ethExists, dispatch]);
+  }, [ethExists, dispatch, setOpen]);
 
   return (
     <div className={styles.wrapper}>

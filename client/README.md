@@ -1,44 +1,132 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
+<div id="top"></div>
+<br />
+<div align="center">
 
-## Available Scripts
+<a href="https://www.loom.com/share/d34e732682174326b9174b540aeffd49">
+    <p>Hotel ETH - 31 December 2021 - Watch Video</p>
+    <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/d34e732682174326b9174b540aeffd49-with-play.gif">
+  </a>
+  <h3 align="center">Hotel ETH</h3>
 
-In the project directory, you can run:
+  <p align="center">
+    A (fictional) Bed-and-Breakfast run on Ethereum
+    <br />
+     <em>Come Book a Room on Kovan or Rinkeby Networks</em>
+     <br />
+    <a href="https://github.com/othneildrew/Best-README-Template"><strong>View the Demo »</strong></a>
+    <br />
+    <a  title="contact developer" href="mailto:appsbylamby@gmail.com">Contact Lamby</a>
+    ·
+    <a href="https://github.com/LambyPants/Hotel-ETH/issues">Report Bug</a>
+    ·
+    <a href="https://www.linkedin.com/in/ryan-lambert-58202596/"">LinkedIn</a>
+  </p>
+</div>
 
-### `yarn start`
+#### Table of Contents
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li><a href="#built-with">Built With</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#obtain-test-ETH">Obtain Test ETH</a></li>
+        <li><a href="#install-metamask">Install MetaMask</a></li>
+        <li><a href="#running-locally">Running Locally</a></li>
+      </ul>
+    </li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#license">License</a></li>
+  </ol>
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+<!-- ABOUT THE PROJECT -->
 
-### `yarn test`
+## About The Project
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Hotel ETH is demo project showcasing how a traditional, fixed-price business could be run on Ethereum.
 
-### `yarn build`
+Key features include:
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- <strong>An ERC-20 token</strong>
+  - can be purchased in advance with ETH at a fixed USD price (using <strong>Chainlink pricing oracles</strong>)
+  - can be redeemed for a night at the Hotel (1 token = 1 night).
+  - can be refunded to users after redemption if the booking is in the future
+- <strong>A full reservation and business management system built with Solidity.</strong>
+  - owners can change the fixed USD price of tokens (similar to how hotel rates change)
+  - owners receive any proceeds (in ETH) at time of sale
+  - owners can mint / burn tokens freely
+- <strong>A full front-end interface built in React + Ethers.js</strong>
+  - users can purchase tokens at a price set by the owner (paid in ETH)
+  - users can redeem + refund tokens used to book reservations at the Hotel
+  - users can see / check availibilty at the hotel and view all of their previous reservations
+  - the UI dynamically updates when other users make reservations at the Hotel
+  - the UI/UX performs automatic field + action validation
+- <strong>A development pipelines built for local, rinkeby, and kovan network environments.</strong>
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+This project is meant for educational purposes only, but in theory you could extend the functionality to run a real (or virtual) business with the underlying infrastructure.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Built With
 
-### `yarn eject`
+- [Solidity](https://docs.soliditylang.org/en/v0.8.11/)
+- [Chainlink Oracles](https://data.chain.link/)
+- [Hardhat](https://hardhat.org/getting-started/)
+- [Ethers.js](https://docs.ethers.io/v5/single-page/)
+- [React.js](https://reactjs.org/)
+- [Redux (slices)](https://redux-toolkit.js.org/api/createslice)
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Getting Started
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Install MetaMask
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+You will need an Ethereum wallet installed to use the demo or run this project locally. I recommend [MetaMask](https://metamask.io/).
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### Obtain Test ETH
 
-## Learn More
+Obtaining test ETH is harder than it should be. I recommend the [Chainlink](https://faucets.chain.link/) faucet.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Running Locally
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+_For Developers_
+
+1. Clone the repo
+   ```sh
+   git clone https://github.com/LambyPants/Hotel-ETH
+   ```
+2. Install NPM packages
+   ```sh
+   npm install
+   ```
+3. Run local blockchain + development server
+
+   ```sh
+   npm run dev
+   ```
+
+   To deploy your own version of the app, you need to fill in the `keys.js` file generated for you on install:
+
+   ```js
+   module.exports = {
+     DEPLOY_PRIVATE_KEY: '',
+     ALCHEMY_API_KEY_RINKEBY: '',
+     ALCHEMY_API_KEY_KOVAN: '',
+   };
+   ```
+
+<!-- CONTACT -->
+
+## Contact
+
+Ryan (Lamby) Lambert - appsbylamby@gmail.com
+
+View my other projects: [https://github.com/LambyPants](https://github.com/LambyPants)
+
+## License
+
+Distributed under the MIT License. See `LICENSE.txt` for more information.
+
+<p align="right">(<a href="#top">back to top</a>)</p>
