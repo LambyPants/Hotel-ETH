@@ -1,8 +1,11 @@
 <div id="top"></div>
 <br />
 <div align="center">
-<iframe width="640" height="360" src="https://www.loom.com/embed/d34e732682174326b9174b540aeffd49" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
+<a href="https://www.loom.com/share/d34e732682174326b9174b540aeffd49">
+    <p>Hotel ETH - 31 December 2021 - Watch Video</p>
+    <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/d34e732682174326b9174b540aeffd49-with-play.gif">
+  </a>
   <h3 align="center">Hotel ETH</h3>
 
   <p align="center">
