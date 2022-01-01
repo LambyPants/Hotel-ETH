@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/LambyPants/Hotel-ETH/static/css/main.b2922e9f.chunk.css",
+    "main.js": "/LambyPants/Hotel-ETH/static/js/main.41d93d7c.chunk.js",
+    "main.js.map": "/LambyPants/Hotel-ETH/static/js/main.41d93d7c.chunk.js.map",
+    "runtime-main.js": "/LambyPants/Hotel-ETH/static/js/runtime-main.6d3ef61b.js",
+    "runtime-main.js.map": "/LambyPants/Hotel-ETH/static/js/runtime-main.6d3ef61b.js.map",
+    "static/css/2.9aaf2cf1.chunk.css": "/LambyPants/Hotel-ETH/static/css/2.9aaf2cf1.chunk.css",
+    "static/js/2.3df00389.chunk.js": "/LambyPants/Hotel-ETH/static/js/2.3df00389.chunk.js",
+    "static/js/2.3df00389.chunk.js.map": "/LambyPants/Hotel-ETH/static/js/2.3df00389.chunk.js.map",
+    "index.html": "/LambyPants/Hotel-ETH/index.html",
+    "static/css/2.9aaf2cf1.chunk.css.map": "/LambyPants/Hotel-ETH/static/css/2.9aaf2cf1.chunk.css.map",
+    "static/css/main.b2922e9f.chunk.css.map": "/LambyPants/Hotel-ETH/static/css/main.b2922e9f.chunk.css.map",
+    "static/js/2.3df00389.chunk.js.LICENSE.txt": "/LambyPants/Hotel-ETH/static/js/2.3df00389.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.6d3ef61b.js",
+    "static/css/2.9aaf2cf1.chunk.css",
+    "static/js/2.3df00389.chunk.js",
+    "static/css/main.b2922e9f.chunk.css",
+    "static/js/main.41d93d7c.chunk.js"
+  ]
+}
