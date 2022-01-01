@@ -9,9 +9,8 @@
     "deploy:local": "npx hardhat compile && npx hardhat run scripts/deploy.js --network localhost",
     "deploy:rinkeby": "npx hardhat compile && npx hardhat run scripts/deploy.js --network rinkeby",
     "deploy:kovan": "npx hardhat compile && npx hardhat run scripts/deploy.js --network kovan",
-    "deploy:all": "npm run deploy:local && npm run deploy:rinkeby && npm run deploy:kovan",
-    "predeploy": "npm run build  --prefix client",
-    "deploy": "cd client && gh-pages -d build",
+    "deploy:blockchain": "npm run deploy:local && npm run deploy:rinkeby && npm run deploy:kovan",
+    "deploy:client": "npm run build  --prefix client && cd client && gh-pages -d build",
     "dev": "concurrently \"npx hardhat node\" \"wait-on http://localhost:8545/ && npm run deploy:local && npm run client\"",
     "client": "npm run start --prefix client",
     "test": "echo \"Error: no test specified\" && exit 1"
