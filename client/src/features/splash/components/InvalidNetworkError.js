@@ -2,7 +2,7 @@ import React from 'react';
 import { Alert, Fade } from '@mui/material';
 
 export function InvalidNetworkError({ validNetwork }) {
-  if (validNetwork) {
+  if (validNetwork || validNetwork === null) {
     return '';
   }
   return (

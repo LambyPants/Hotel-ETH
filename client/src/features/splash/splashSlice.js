@@ -42,7 +42,7 @@ const initialState = {
   userAddress: '',
   provider: null,
   userBalance: 0,
-  validChain: false,
+  validChain: null,
 };
 export const splashSlice = createSlice({
   name: 'splash',
