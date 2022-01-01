@@ -7,13 +7,10 @@ async function main() {
   SUPPORTED_NETWORKS.forEach((name) => {
     console.log('name: ', name);
     try {
-      const path = contractsDir + `/${name}-address.json`;
+      const path = `${contractsDir}/${name}-address.json`;
       if (!fs.existsSync(path)) {
         console.log('Creating empty imports for ', name);
-        fs.writeFileSync(
-          contractsDir + `/${name}-address.json`,
-          JSON.stringify({ Hotel: '' }, undefined, 2),
-        );
+        fs.writeFileSync(path, JSON.stringify({ Hotel: '' }, undefined, 2));
       }
     } catch {
       console.log(
@@ -21,6 +18,12 @@ async function main() {
       );
     }
   });
+  const keysPath = `${__dirname}/../keys.js`;
+  if (!fs.existsSync(`${__dirname}/../keys.js`)) {
+    console.log('Generating a placeholder keys file', keysPath);
+    const code = `module.exports = { DEPLOY_PRIVATE_KEY: '0000000000000000000000000000000000000000000000000000000000000000', ALCHEMY_API_KEY_RINKEBY: '', ALCHEMY_API_KEY_KOVAN: ''};`;
+    fs.writeFileSync(keysPath, code);
+  }
 }
 
 main()

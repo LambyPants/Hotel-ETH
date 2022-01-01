@@ -1,7 +1,7 @@
 <div id="top"></div>
 <br />
 <div align="center">
-<img src="http://g.recordit.co/Aa12Arj02f.gif" alt="demo"/>
+<iframe width="640" height="360" src="https://www.loom.com/embed/d34e732682174326b9174b540aeffd49" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
   <h3 align="center">Hotel ETH</h3>
 
@@ -20,8 +20,8 @@
   </p>
 </div>
 
-<!-- TABLE OF CONTENTS -->
-  <summary>Table of Contents</summary>
+#### Table of Contents
+
   <ol>
     <li>
       <a href="#about-the-project">About The Project</a>
@@ -37,8 +37,8 @@
         <li><a href="#running-locally">Running Locally</a></li>
       </ul>
     </li>
-    <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
+    <li><a href="#license">License</a></li>
   </ol>
 
 <!-- ABOUT THE PROJECT -->
@@ -49,17 +49,30 @@ Hotel ETH is demo project showcasing how a traditional, fixed-price business cou
 
 Key features include:
 
-- An ERC-20 token which can be purchased in advance with ETH and redeemed for a night at the Hotel (1 token = 1 night).
-- A full reservation and business management system built with Solidity. Owners can change room prices and access protected methods.
-- A full front-end interface which allows users to purchase tokens, view Hotel availability and create and refund reservations.
-- Development pipelines built for local, rinkeby, and kovan network environments.
+- <strong>An ERC-20 token</strong>
+  - can be purchased in advance with ETH at a fixed USD price (using <strong>Chainlink pricing oracles</strong>)
+  - can be redeemed for a night at the Hotel (1 token = 1 night).
+  - can be refunded to users after redemption if the booking is in the future
+- <strong>A full reservation and business management system built with Solidity.</strong>
+  - owners can change the fixed USD price of tokens (similar to how hotel rates change)
+  - owners receive any proceeds (in ETH) at time of sale
+  - owners can mint / burn tokens freely
+- <strong>A full front-end interface built in React + Ethers.js</strong>
+  - users can purchase tokens at a price set by the owner (paid in ETH)
+  - users can redeem + refund tokens used to book reservations at the Hotel
+  - users can see / check availibilty at the hotel and view all of their previous reservations
+  - the UI dynamically updates when other users make reservations at the Hotel
+  - the UI/UX performs automatic field + action validation
+- <strong>A development pipelines built for local, rinkeby, and kovan network environments.</strong>
 
 This project is meant for educational purposes only, but in theory you could extend the functionality to run a real (or virtual) business with the underlying infrastructure.
 
 ### Built With
 
 - [Solidity](https://docs.soliditylang.org/en/v0.8.11/)
+- [Chainlink Oracles](https://data.chain.link/)
 - [Hardhat](https://hardhat.org/getting-started/)
+- [Ethers.js](https://docs.ethers.io/v5/single-page/)
 - [React.js](https://reactjs.org/)
 - [Redux (slices)](https://redux-toolkit.js.org/api/createslice)
 
@@ -86,15 +99,20 @@ _For Developers_
    npm install
    ```
 3. Run local blockchain + development server
+
    ```sh
    npm run dev
    ```
 
-<!-- LICENSE -->
+   To deploy your own version of the app, you need to fill in the `keys.js` file generated for you on install:
 
-## License
-
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+   ```js
+   module.exports = {
+     DEPLOY_PRIVATE_KEY: '',
+     ALCHEMY_API_KEY_RINKEBY: '',
+     ALCHEMY_API_KEY_KOVAN: '',
+   };
+   ```
 
 <!-- CONTACT -->
 
@@ -103,5 +121,9 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 Ryan (Lamby) Lambert - appsbylamby@gmail.com
 
 View my other projects: [https://github.com/LambyPants](https://github.com/LambyPants)
+
+## License
+
+Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
