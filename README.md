@@ -13,7 +13,7 @@
     <br />
      <em>Come Book a Room on Kovan or Rinkeby Networks</em>
      <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>View the Demo »</strong></a>
+    <a href="https://lambypants.github.io/Hotel-ETH/"><strong>View the Demo »</strong></a>
     <br />
     <a  title="contact developer" href="mailto:appsbylamby@gmail.com">Contact Lamby</a>
     ·
