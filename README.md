@@ -2,9 +2,9 @@
 <br />
 <div align="center">
 
-<a href="https://www.loom.com/share/d34e732682174326b9174b540aeffd49">
-    <p>Hotel ETH - 31 December 2021 - Watch Video</p>
-    <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/d34e732682174326b9174b540aeffd49-with-play.gif">
+<a href="https://www.loom.com/share/9e679a92605549bd9d6ff42d057b295e">
+    <p>Hotel ETH - Watch Demo Video</p>
+    <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/9e679a92605549bd9d6ff42d057b295e-with-play.gif">
   </a>
   <h3 align="center">Hotel ETH</h3>
 
@@ -88,6 +88,12 @@ You will need an Ethereum wallet installed to use the demo or run this project l
 ### Obtain Test ETH
 
 Obtaining test ETH is harder than it should be. I recommend the [Chainlink](https://faucets.chain.link/) faucet.
+
+### Buy, Redeem and Refund Tokens
+
+You can purchase tokens in the app after connecting your wallet. the Price is set by the Hotel Owner and is paid in ETH.
+
+The app is deployed on Kovan and Rinkeby networks.
 
 ### Running Locally
 

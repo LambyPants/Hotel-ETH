@@ -55,10 +55,10 @@ export const buyNumTokens = createAsyncThunk(
   async (num, thunkAPI) => {
     try {
       const contractABI = selectHotelABI(thunkAPI.getState());
-      const currEthPrice = selectTokenPriceEth(thunkAPI.getState());
-      console.log();
+      // grab it again for better accuracy
+      const currEthPrice = await contractABI.getEthPriceForTokens(num);
       const tx = await contractABI.buyTokens(num, {
-        value: ethers.utils.parseEther(String(Number(currEthPrice) * num)),
+        value: currEthPrice,
         gasLimit: GAS_LIMIT,
       });
       const receipt = await tx.wait();

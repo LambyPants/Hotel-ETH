@@ -86,7 +86,7 @@ export function BookingCalendar() {
       const todayButton = document.querySelector('.rbc-btn-group button');
       if (todayButton) document.querySelector('.rbc-btn-group button').click();
     }
-  }, [showCalendar]);
+  }, [showCalendar, userAddress]);
 
   useEffect(() => {
     if (showUserBookings) {
