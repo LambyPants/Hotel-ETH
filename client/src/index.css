@@ -55,3 +55,11 @@ div.rbc-toolbar > span:nth-child(3) {
   opacity: 0.3;
   transition: background 0.3s ease;
 }
+
+@media (max-width: 576px) {
+  html,
+  body,
+  #root {
+    overflow: auto;
+  }
+}

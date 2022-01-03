@@ -25,7 +25,7 @@ export function NoEthereumError({ ethExists, open, setOpen }) {
         sx={{ mb: 2 }}
       >
         {' '}
-        No Ethereum wallet was detected. To book a room, please install{' '}
+        No Ethereum wallet detected. To book a room, please install{' '}
         <a
           href="http://metamask.io"
           aria-label="install an ethereum wallet to use this app"
