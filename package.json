@@ -13,7 +13,7 @@
     "deploy:client": "npm run build  --prefix client && cd client && gh-pages -d build",
     "dev": "concurrently \"npx hardhat node\" \"wait-on http://localhost:8545/ && npm run deploy:local && npm run client\"",
     "client": "npm run start --prefix client",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "hardhat test"
   },
   "author": "",
   "license": "ISC",
