@@ -1,23 +1,13 @@
 {
   "files": {
-    "main.css": "/Hotel-ETH/static/css/main.04c39ed1.chunk.css",
-    "main.js": "/Hotel-ETH/static/js/main.e0fa28d0.chunk.js",
-    "main.js.map": "/Hotel-ETH/static/js/main.e0fa28d0.chunk.js.map",
-    "runtime-main.js": "/Hotel-ETH/static/js/runtime-main.22b0fc44.js",
-    "runtime-main.js.map": "/Hotel-ETH/static/js/runtime-main.22b0fc44.js.map",
-    "static/css/2.9aaf2cf1.chunk.css": "/Hotel-ETH/static/css/2.9aaf2cf1.chunk.css",
-    "static/js/2.88f49b05.chunk.js": "/Hotel-ETH/static/js/2.88f49b05.chunk.js",
-    "static/js/2.88f49b05.chunk.js.map": "/Hotel-ETH/static/js/2.88f49b05.chunk.js.map",
+    "main.css": "/Hotel-ETH/static/css/main.3d2cd101.css",
+    "main.js": "/Hotel-ETH/static/js/main.6456186e.js",
     "index.html": "/Hotel-ETH/index.html",
-    "static/css/2.9aaf2cf1.chunk.css.map": "/Hotel-ETH/static/css/2.9aaf2cf1.chunk.css.map",
-    "static/css/main.04c39ed1.chunk.css.map": "/Hotel-ETH/static/css/main.04c39ed1.chunk.css.map",
-    "static/js/2.88f49b05.chunk.js.LICENSE.txt": "/Hotel-ETH/static/js/2.88f49b05.chunk.js.LICENSE.txt"
+    "main.3d2cd101.css.map": "/Hotel-ETH/static/css/main.3d2cd101.css.map",
+    "main.6456186e.js.map": "/Hotel-ETH/static/js/main.6456186e.js.map"
   },
   "entrypoints": [
-    "static/js/runtime-main.22b0fc44.js",
-    "static/css/2.9aaf2cf1.chunk.css",
-    "static/js/2.88f49b05.chunk.js",
-    "static/css/main.04c39ed1.chunk.css",
-    "static/js/main.e0fa28d0.chunk.js"
+    "static/css/main.3d2cd101.css",
+    "static/js/main.6456186e.js"
   ]
 }
