@@ -1,15 +1,12 @@
 import { ethers } from 'ethers';
 import HotelArtifact from '../../contracts/Hotel.json';
 import localAddress from '../../contracts/localhost-address.json';
-import rinkebyAddress from '../../contracts/rinkeby-address.json';
-import kovanAddress from '../../contracts/kovan-address.json';
+import sepoliaAddress from '../../contracts/sepolia-address.json';
 
 export function findNetwork(chainId) {
   switch (chainId) {
-    case 4:
-      return rinkebyAddress;
-    case 42:
-      return kovanAddress;
+    case 11155111:
+      return sepoliaAddress;
     default:
       return localAddress;
   }
