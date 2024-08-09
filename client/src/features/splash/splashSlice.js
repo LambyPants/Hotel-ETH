@@ -5,7 +5,7 @@ import {
 } from '@reduxjs/toolkit';
 import { connectWallet, setContractABI } from './splashAPI';
 
-const VALID_CHAINS = [4, 42, 1337];
+const VALID_CHAINS = [11155111, 1337];
 
 export const fetchUserBalance = createAsyncThunk(
   'splash/fetchUserBalance',

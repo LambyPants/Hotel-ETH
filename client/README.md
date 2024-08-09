@@ -11,7 +11,7 @@
   <p align="center">
     A (fictional) Bed-and-Breakfast run on Ethereum
     <br />
-     <em>Come Book a Room on Kovan or Rinkeby Networks</em>
+     <em>Come Book a Room on Sepolia Testnet</em>
      <br />
     <a href="https://lambypants.github.io/Hotel-ETH/"><strong>View the Demo »</strong></a>
     <br />
@@ -87,13 +87,13 @@ You will need an Ethereum wallet installed to use the demo or run this project l
 
 ### Obtain Test ETH
 
-Obtaining test ETH is harder than it should be. I recommend the [Chainlink](https://faucets.chain.link/) faucet.
+Obtaining test ETH is harder than it should be. 2024 update - it's even harder now. Good luck! I recommend the [Chainlink](https://faucets.chain.link/) faucet.
 
 ### Buy, Redeem and Refund Tokens
 
 You can purchase tokens in the app after connecting your wallet. the Price is set by the Hotel Owner and is paid in ETH.
 
-The app is deployed on Kovan and Rinkeby networks.
+The app is deployed on Sepolia Testnet.
 
 ### Running Locally
 
@@ -118,8 +118,7 @@ _For Developers_
    ```js
    module.exports = {
      DEPLOY_PRIVATE_KEY: '',
-     ALCHEMY_API_KEY_RINKEBY: '',
-     ALCHEMY_API_KEY_KOVAN: '',
+     ALCHEMY_API_KEY_SEPOLIA: ''
    };
    ```
 

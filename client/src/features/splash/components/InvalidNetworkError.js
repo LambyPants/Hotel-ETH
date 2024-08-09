@@ -8,7 +8,7 @@ export function InvalidNetworkError({ validNetwork }) {
   return (
     <Fade in={!validNetwork} timeout={1000}>
       <Alert severity="error" sx={{ mb: 2 }}>
-        Unsupported Network - Please connect to Rinkeby, Kovan, or localhost
+        Unsupported Network - Please connect to Sepolia or localhost
         ChainID 1337
       </Alert>
     </Fade>

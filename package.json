@@ -7,11 +7,9 @@
   "scripts": {
     "prepare": "npx hardhat run scripts/populate.js",
     "deploy:local": "npx hardhat compile && npx hardhat run scripts/deploy.js --network localhost",
-    "deploy:rinkeby": "npx hardhat compile && npx hardhat run scripts/deploy.js --network rinkeby",
-    "deploy:kovan": "npx hardhat compile && npx hardhat run scripts/deploy.js --network kovan",
-    "deploy:blockchain": "npm run deploy:local && npm run deploy:rinkeby && npm run deploy:kovan",
+    "deploy:sepolia": "npx hardhat compile && npx hardhat run scripts/deploy.js --network sepolia",
     "deploy:client": "npm run build  --prefix client && cd client && gh-pages -d build",
-    "dev": "concurrently \"npx hardhat node\" \"wait-on http://localhost:8545/ && npm run deploy:local && npm run client\"",
+    "dev": "concurrently \"npx hardhat node\" \"npm run deploy:local && npm run client\"",
     "client": "npm run start --prefix client",
     "test": "hardhat test"
   },

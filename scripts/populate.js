@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const SUPPORTED_NETWORKS = ['localhost', 'kovan', 'rinkeby'];
+const SUPPORTED_NETWORKS = ['localhost', 'sepolia'];
 const contractsDir = __dirname + '/../client/src/contracts';
 
 async function main() {
@@ -21,7 +21,7 @@ async function main() {
   const keysPath = `${__dirname}/../keys.js`;
   if (!fs.existsSync(`${__dirname}/../keys.js`)) {
     console.log('Generating a placeholder keys file', keysPath);
-    const code = `module.exports = { DEPLOY_PRIVATE_KEY: '0000000000000000000000000000000000000000000000000000000000000000', ALCHEMY_API_KEY_RINKEBY: '', ALCHEMY_API_KEY_KOVAN: ''};`;
+    const code = `module.exports = { DEPLOY_PRIVATE_KEY: '0000000000000000000000000000000000000000000000000000000000000000', ALCHEMY_API_KEY_SEPOLIA: '', ALCHEMY_API_KEY_LINEA_SEPOLIA: ''};`;
     fs.writeFileSync(keysPath, code);
   }
 }

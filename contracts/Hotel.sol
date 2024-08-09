@@ -12,7 +12,7 @@ import "./Token.sol";
 /// @title A traditional, fixed-price business (Bed and Breakfast) run on Ethereum. Includes a token + schedule system.
 /// @author Ryan "Lamby" Lambert
 /// @notice 1 token is always = 1 day accomodation. The USD price of the token can change. Appointments are scheduled in epoch time.
-/// @dev Example project to be used on Rinkeby test network
+/// @dev Example project to be used on Sepolia test network
 contract Hotel {
     // to prevent overflows, use SafeMath
     using SafeMath for uint256;
@@ -114,7 +114,6 @@ contract Hotel {
         CONTRACT_DEPLOY_TIME = block.timestamp;
         bookingToken = new BookingToken(address(this));
         owner = payable(msg.sender);
-        // Rinkeby ETH/USD
         priceFeed = AggregatorV3Interface(_priceContractAddr);
         // DateTime Helper Contract
         dateTime = new DateTime();
@@ -288,7 +287,7 @@ contract Hotel {
         bookingTokenPrice = _newPrice;
     }
 
-    /// @notice Returns the price of ETH / USD from Chainlink Rinkeby price feed
+    /// @notice Returns the price of ETH / USD from Chainlink price feed
     /// @dev Chainlink returns int256 values which can be negative
     /// @return int256
     function returnPrice() internal view returns (int256) {

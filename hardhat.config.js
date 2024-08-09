@@ -1,7 +1,7 @@
 require('@nomiclabs/hardhat-waffle');
 const {
-  ALCHEMY_API_KEY_KOVAN,
-  ALCHEMY_API_KEY_RINKEBY,
+  ALCHEMY_API_KEY_LINEA_SEPOLIA,
+  ALCHEMY_API_KEY_SEPOLIA,
   DEPLOY_PRIVATE_KEY,
 } = require('./keys');
 
@@ -27,19 +27,15 @@ const developmentChains = ['hardhat', 'localhost'];
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  solidity: '0.8.4',
+  solidity: "0.8.4",
   developmentChains,
   networks: {
     hardhat: {
       chainId: 1337,
     },
-    rinkeby: {
-      url: ALCHEMY_API_KEY_RINKEBY,
+    sepolia: {
+      url: ALCHEMY_API_KEY_SEPOLIA,
       accounts: [`${DEPLOY_PRIVATE_KEY}`],
-    },
-    kovan: {
-      url: ALCHEMY_API_KEY_KOVAN,
-      accounts: [`${DEPLOY_PRIVATE_KEY}`],
-    },
+    }
   },
 };
